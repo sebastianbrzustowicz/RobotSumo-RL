@@ -1,23 +1,39 @@
-# General display and timing settings
-WIDTH, HEIGHT = 600, 600
+import math
+
+# Display
+WIDTH, HEIGHT = 1100, 800
 FPS = 60
+M_TO_PX = 387
 
-# Physical arena scale (conversion ratio and dimensions)
-CM_TO_PX = 3.87
-ARENA_DIAMETER_CM = 154
-# Calculated radius for the circle
-ARENA_RADIUS = int((ARENA_DIAMETER_CM / 2) * CM_TO_PX)
+# Arena
+ARENA_DIAMETER_CM = 1.54
+ARENA_RADIUS = int((ARENA_DIAMETER_CM / 2) * M_TO_PX)
+BACKGROUND_COLOR = (255, 255, 255)
+ARENA_COLOR = (0, 0, 0)
 
-# Visuals for the bots and play area
-ROBOT_RADIUS = 15
+# Robot
+ROBOT_SIDE = 0.2
+ROBOT_SIZE_PX = int(ROBOT_SIDE * M_TO_PX)
 ROBOT_COLOR_1 = (0, 255, 0)
 ROBOT_COLOR_2 = (0, 0, 255)
-BACKGROUND_COLOR = (50, 50, 50)
-ARENA_COLOR = (200, 200, 200)
 
-# Movement and physics constants
-ROTATE_SPEED = 4
-MAX_SPEED = 6
-ACCELERATION = 0.3
-FRICTION = 0.05
-SLIP = 0.01
+WHEEL_DIAMETER = 0.025    
+MOTOR_MAX_RPM = 1500.0      
+WHEEL_V_MAX = 2 * math.pi * WHEEL_DIAMETER / 2 * MOTOR_MAX_RPM / 60 # ~1.9634 m/s
+
+V_MAX_MPS = WHEEL_V_MAX
+OMEGA_MAX_RADS = WHEEL_V_MAX /  (ROBOT_SIDE / 2) # 1.9634 / 0.1 = 19.634 rad/s
+
+# Dynamics
+A_MPS2 = 25.0
+ALPHA_RADS2 = 250.0 # Angular acceleration (rad/s^2)
+
+# Conversion to training units (per frame)
+MAX_SPEED = (V_MAX_MPS * M_TO_PX) / FPS      # px/frame
+ROTATE_SPEED = OMEGA_MAX_RADS / FPS          # rad/frame
+ACCELERATION = (A_MPS2 * M_TO_PX) / (FPS**2) # px/frame^2
+ACCEL_ANGULAR = ALPHA_RADS2 / (FPS**2)       # rad/frame^2
+
+# Friction and other
+FRICTION = 0.02
+LATERAL_FRICTION = 0.10
