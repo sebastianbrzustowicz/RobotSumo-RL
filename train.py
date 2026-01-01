@@ -1,6 +1,7 @@
 import torch
 import torch.optim as optim
 import torch.nn.functional as F
+import torch.multiprocessing as mp
 import numpy as np
 import os
 import random
@@ -10,6 +11,7 @@ from env.sumo_env import SumoEnv
 from model import ActorCriticNet, select_action
 from rewards import get_reward
 
+NUM_ENVS = 1 
 EPISODES = 100000
 MAX_STEPS = 1000
 GAMMA = 0.99
@@ -20,13 +22,41 @@ HISTORY_DIR = os.path.join(MODEL_DIR, "history")
 MASTER_PATH = os.path.join(MODEL_DIR, "sumo_push_master.pt")
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+def make_env():
+    return SumoEnv(render_mode=RENDER)
+
+def env_worker(remote, env_fn):
+    env = env_fn()
+    while True:
+        try:
+            cmd, data = remote.recv()
+            if cmd == 'step':
+                obs, rewards, done, info = env.step(data[0], data[1])
+                if done:
+                    obs = env.reset(randPositions=True)
+                remote.send((obs, rewards, done, info))
+            elif cmd == 'reset':
+                remote.send(env.reset(randPositions=data))
+            elif cmd == 'close':
+                remote.close()
+                break
+        except EOFError:
+            break
+
 def get_history_models():
     return glob.glob(os.path.join(HISTORY_DIR, "model_v*.pt"))
 
 def train():
+    mp.set_start_method('spawn', force=True)
     os.makedirs(HISTORY_DIR, exist_ok=True)
-    env = SumoEnv(render_mode=RENDER)
     
+    remotes, work_remotes = zip(*[mp.Pipe() for _ in range(NUM_ENVS)])
+    ps = [mp.Process(target=env_worker, args=(work_remotes[i], make_env)) 
+          for i in range(NUM_ENVS)]
+    for p in ps: 
+        p.daemon = True
+        p.start()
+
     model = ActorCriticNet(obs_size=11).to(DEVICE)
     if os.path.exists(MASTER_PATH):
         model.load_state_dict(torch.load(MASTER_PATH))
@@ -36,112 +66,131 @@ def train():
         torch.save(model.state_dict(), MASTER_PATH)
 
     optimizer = optim.Adam(model.parameters(), lr=LR)
-    opponent_model = ActorCriticNet(obs_size=11).to(DEVICE)
-    opponent_model.eval()
+    opponent_nets = [ActorCriticNet(obs_size=11).to(DEVICE).eval() for _ in range(NUM_ENVS)]
     
     win_history = deque(maxlen=100)
     last_update_ep = 0
-    print(f"🚀 Start: {DEVICE}")
+    print(f"🚀 Start Parallel Training: {DEVICE}")
 
-    for ep in range(EPISODES):
+    for ep in range(0, EPISODES, NUM_ENVS):
         history_files = get_history_models()
-        is_fighting_master = True
-        
-        if random.random() < 0.20 and len(history_files) > 0:
-            chosen_opp_path = random.choice(history_files)
-            is_fighting_master = False
-        else:
-            chosen_opp_path = MASTER_PATH
-            
-        opponent_model.load_state_dict(torch.load(chosen_opp_path))
-        opp_name = "MASTER" if is_fighting_master else os.path.basename(chosen_opp_path)
+        batch_data = []
 
-        all_obs = env.reset(randPositions=True)
-        state_ai = all_obs[0]   
-        done = False
-        had_collision = False 
-        episode_reward = 0.0
-        log_probs, values, rewards, entropies = [], [], [], []
-        
+        for i in range(NUM_ENVS):
+            is_fighting_master = random.random() >= 0.20 or len(history_files) == 0
+            path = MASTER_PATH if is_fighting_master else random.choice(history_files)
+            opponent_nets[i].load_state_dict(torch.load(path))
+            
+            remotes[i].send(('reset', True))
+            all_obs = remotes[i].recv()
+            
+            batch_data.append({
+                'is_master': is_fighting_master, 
+                'opp_name': "MASTER" if is_fighting_master else os.path.basename(path),
+                'obs': all_obs, 'reward': 0.0,
+                'lps': [], 'vals': [], 'rews': [], 'ents': []
+            })
+
+        active_indices = list(range(NUM_ENVS))
         for step in range(MAX_STEPS):
-            action_np, lp, ent, val = select_action(model, state_ai, DEVICE)
-            action_env = action_np.flatten()
+            if not active_indices: break
             
-            with torch.no_grad():
-                act_opp_np, _, _, _ = select_action(opponent_model, all_obs[1], DEVICE)
-                action_enemy = act_opp_np.flatten()
+            is_last_step = (step == MAX_STEPS - 1)
+            current_step_indices = []
             
-            next_all_obs, _, done, info = env.step(action_env, action_enemy)
-            if info.get('collision', False): had_collision = True
-            
-            next_state_ai = next_all_obs[0]
-            reward = get_reward(env, info, done, next_state_ai, had_collision)
-            
-            log_probs.append(lp)
-            values.append(val)
-            rewards.append(reward)
-            entropies.append(ent)
-            
-            episode_reward += reward
-            state_ai = next_state_ai
-            all_obs = next_all_obs 
-            if RENDER: env.render()
-            if done: break
+            for i in active_indices:
+                d = batch_data[i]
+                act_ai, lp, ent, val = select_action(model, d['obs'][0], DEVICE)
+                with torch.no_grad():
+                    act_opp, _, _, _ = select_action(opponent_nets[i], d['obs'][1], DEVICE)
+                
+                d['lps'].append(lp); d['vals'].append(val); d['ents'].append(ent)
+                remotes[i].send(('step', (act_ai.flatten(), act_opp.flatten())))
+                current_step_indices.append(i)
 
-        if len(rewards) > 1:
-            R = 0
-            returns = []
-            for r in reversed(rewards):
-                R = r + GAMMA * R
-                returns.insert(0, R)
-            
-            returns = torch.tensor(returns, device=DEVICE, dtype=torch.float32).view(-1, 1)
-            log_probs = torch.cat(log_probs).view(-1, 1)
-            values = torch.cat(values).view(-1, 1)
-            
-            if returns.std() > 1e-5:
-                returns = (returns - returns.mean()) / (returns.std() + 1e-8)
-            
-            advantage = returns - values.detach()
-            actor_loss = -(log_probs * advantage).mean()
-            critic_loss = F.mse_loss(values, returns)
-            entropy_loss = -0.01 * torch.cat(entropies).mean()
-            
-            loss = actor_loss + 0.5 * critic_loss + entropy_loss
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+            for i in current_step_indices:
+                next_obs, _, env_done, info = remotes[i].recv()
+                
+                done = env_done or is_last_step
+                winner = info.get('winner', 0)
+                
+                if is_last_step and not env_done:
+                    winner = 0
+                
+                is_coll = info.get('is_collision', False)
+                reward = get_reward(None, info, done, next_obs[0], is_coll)
+                
+                batch_data[i]['rews'].append(reward)
+                batch_data[i]['reward'] += reward
+                batch_data[i]['obs'] = next_obs
+                
+                if done:
+                    if batch_data[i]['is_master']:
+                        win_history.append(1.0 if winner == 1 else (0.5 if winner == 0 else 0.0))
+                    
+                    wr = sum(win_history)/len(win_history) if win_history else 0
+                    status = "WIN" if winner == 1 else ("LOSE" if winner == 2 else "DRAW")
+                    
+                    print(f"Ep {ep+i+1:04d} | Steps: {step+1:4} | vs {batch_data[i]['opp_name']:12} | Reward: {batch_data[i]['reward']:7.2f} | WR: {wr:.2%} | {status}")
+                    active_indices.remove(i)
 
-        winner = info.get('winner', 0)
+        total_loss = 0
+        for i in range(NUM_ENVS):
+            d = batch_data[i]
+            if len(d['rews']) > 1:
+                R = 0
+                returns = []
+                for r in reversed(d['rews']):
+                    R = r + GAMMA * R
+                    returns.insert(0, R)
+                
+                ret = torch.tensor(returns, device=DEVICE, dtype=torch.float32).view(-1, 1)
+                lps = torch.cat(d['lps']).view(-1, 1)
+                vals = torch.cat(d['vals']).view(-1, 1)
+                
+                if ret.std() > 1e-5: ret = (ret - ret.mean()) / (ret.std() + 1e-8)
+                
+                adv = ret - vals.detach()
+                total_loss += -(lps * adv).mean() + 0.5 * F.mse_loss(vals, ret) - 0.01 * torch.cat(d['ents']).mean()
+
+        optimizer.zero_grad()
+        (total_loss / NUM_ENVS).backward()
+        optimizer.step()
+
+        wr = sum(win_history)/len(win_history) if win_history else 0
+        draw_count = sum(1 for score in win_history if score == 0.5)
         
-        if is_fighting_master:
-            if winner == 1:
-                score = 1.0
-            elif winner == 0:
-                score = 0.5
-            else:
-                score = 0.0
-            win_history.append(score)
+        # c_list: (win ratio level, min episodes break, max draws)
+        c_list = [
+            (0.51, 40, 50), # WR >= 51%, min 40 ep break, max 10 draws in history
+            (0.52, 36, 49),
+            (0.53, 32, 48),
+            (0.54, 28, 47),
+            (0.55, 24, 46),
+            (0.56, 20, 45),
+            (0.57, 16, 44),
+            (0.58, 12, 43),
+            (0.59, 8, 42),
+            (0.60, 5, 40)
+        ]
         
-        current_win_rate = sum(win_history) / len(win_history) if len(win_history) > 0 else 0
-        status = "WIN" if winner == 1 else ("LOSE" if winner == 2 else "DRAW")
-        
-        print(f"Ep {ep+1:04d} | vs {opp_name:12} | Total Reward: {episode_reward:7.2f} | WR: {current_win_rate:.2%} | {status}")
+        # Check update conditions
+        update_triggered = False
+        if len(win_history) >= 100:
+            for threshold_wr, wait_ep, max_draws in c_list:
+                if wr >= threshold_wr and (ep - last_update_ep) >= wait_ep and draw_count < max_draws:
+                    update_triggered = True
+                    break
 
-        condition_1 = len(win_history) >= 20 and current_win_rate >= 0.52 and (ep - last_update_ep) >= 50
-        condition_2 = len(win_history) >= 20 and current_win_rate >= 0.54 and (ep - last_update_ep) >= 30
-        condition_3 = len(win_history) >= 20 and current_win_rate >= 0.56 and (ep - last_update_ep) >= 15
-
-        if condition_1 or condition_2 or condition_3:
-            version = len(get_history_models())
-            new_v_path = os.path.join(HISTORY_DIR, f"model_v{version}.pt")
-            torch.save(model.state_dict(), new_v_path)
+        if update_triggered:
+            ver = len(get_history_models())
             torch.save(model.state_dict(), MASTER_PATH)
+            torch.save(model.state_dict(), os.path.join(HISTORY_DIR, f"model_v{ver}.pt"))
             last_update_ep = ep
-            print(f"🔥 [NEW MASTER] v{version} WR: {current_win_rate:.2%}")
+            print(f"🔥 [NEW MASTER] v{ver} WR: {wr:.2%} | Draws: {draw_count} | Ep: {ep}")
 
-    torch.save(model.state_dict(), os.path.join(MODEL_DIR, "final_model.pt"))
-    print("✅ The end.")
+    for r in remotes: r.send(('close', None))
+    for p in ps: p.join()
 
 if __name__ == "__main__":
     train()

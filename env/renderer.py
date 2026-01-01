@@ -10,6 +10,7 @@ class SumoRenderer:
                  show_sensors=True, 
                  show_ui=True):
         self.screen = screen
+        #self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.NOFRAME)
         self.font_main = font_main
         self.font_header = font_header
         self.center_x, self.center_y = WIDTH // 2, HEIGHT // 2
@@ -94,7 +95,7 @@ class SumoRenderer:
 
         ui_configs = [
             {"name": "ROBOT 1", "color": ROBOT_COLOR_1, "x": 20},
-            {"name": "ROBOT 2", "color": ROBOT_COLOR_2, "x": WIDTH - 240}
+            {"name": "ROBOT 2", "color": ROBOT_COLOR_2, "x": WIDTH - 160}
         ]
         obs_labels = ["v_fwd", "v_side", "omega", "sin_ang", "cos_ang", "dist_opp", "sin_opp", "cos_opp", "dist_edge", "sin_cntr", "cos_cntr"]
 

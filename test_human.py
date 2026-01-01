@@ -10,13 +10,13 @@ from env.config import *
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # --- PLAYER CONFIGURATION ---
-PLAYER_1_TYPE = "ai" # "human" / "ai" / "dummy"
-MODEL_1_PATH = "models/history/model_v43.pt"
+PLAYER_1_TYPE = "human" # "human" / "ai" / "dummy"
+MODEL_1_PATH = "models/chosen/model_v101.pt"
 
 PLAYER_2_TYPE = "ai" # "human" / "ai" / "dummy"
-MODEL_2_PATH = "models/chosen/model_v29.pt" 
+MODEL_2_PATH = "models/sumo_push_master.pt"
 
-def load_ai_model(path, device):
+def load_ai_model(path, device, debug=True):
     if not os.path.exists(path):
         print(f"⚠️ Model nie znaleziony: {path}")
         return None
@@ -24,7 +24,8 @@ def load_ai_model(path, device):
     model = ActorCriticNet(obs_size=11).to(device)
     model.load_state_dict(torch.load(path, map_location=device))
     model.eval()
-    print(f"✅ Model loaded: {path}")
+    if debug:
+        print(f"✅ Model loaded: {path}")
     return model
 
 def get_action(p_type, robot_idx, state, model):
@@ -102,6 +103,8 @@ def main():
 
             pygame.time.wait(1000)
             state = env.reset(randPositions=True)
+            model1 = load_ai_model(MODEL_1_PATH, DEVICE, debug=False) if PLAYER_1_TYPE == "ai" else None
+            model2 = load_ai_model(MODEL_2_PATH, DEVICE, debug=False) if PLAYER_2_TYPE == "ai" else None
 
     pygame.quit()
     sys.exit()
