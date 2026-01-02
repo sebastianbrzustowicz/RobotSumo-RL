@@ -28,8 +28,8 @@ The input state vector (`state_ai`) consists of 11 normalized values, providing 
 ## Reward Shaping Details
 The reward system is designed to enforce aggressive combat and strategic survival:
 
-* **Terminal Rewards:** Large bonuses for winning and significant penalties for falling out or timing out (draw).
-* **Movement Constraints:** * **Backward Block:** Reverse driving is strictly penalized and cancels other rewards for that step.
+* **Terminal Rewards:** Large bonuses for winning and significant penalties for falling out or timing out (draw).   
+* **Backward Block:** Reverse driving is strictly penalized and cancels other rewards for that step.
 * **Anti-Spinning:** Penalties for excessive rotation to prevent aimless spinning.
 * **Forward Progress:** Rewards for moving forward are scaled by targeting accuracy (facing the opponent).
 * **"Nitro" Charge:** Exponential speed bonuses granted only when charging directly at the opponent.
