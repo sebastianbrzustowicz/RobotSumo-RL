@@ -10,8 +10,8 @@ from env.config import *
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # --- PLAYER CONFIGURATION ---
-PLAYER_1_TYPE = "human" # "human" / "ai" / "dummy"
-MODEL_1_PATH = "models/chosen/model_v101.pt"
+PLAYER_1_TYPE = "ai" # "human" / "ai" / "dummy"
+MODEL_1_PATH = "models/favourite/A2C/model_v101.pt"
 
 PLAYER_2_TYPE = "ai" # "human" / "ai" / "dummy"
 MODEL_2_PATH = "models/sumo_push_master.pt"
