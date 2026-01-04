@@ -1,7 +1,7 @@
 import pygame
 import math
 import numpy as np
-from env.config import *
+from src.env.config import *
 from collections import deque
 
 class SumoRenderer:

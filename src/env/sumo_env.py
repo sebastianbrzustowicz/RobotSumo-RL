@@ -1,10 +1,10 @@
 import pygame
 import numpy as np
 import math
-from env.config import *
-from env.robot import SumoRobot
-from env.collisions import check_sat_collision, get_robot_global_velocity
-from env.renderer import SumoRenderer
+from src.env.config import *
+from src.env.robot import SumoRobot
+from src.env.collisions import check_sat_collision, get_robot_global_velocity
+from src.env.renderer import SumoRenderer
 import os
 
 class SumoEnv:

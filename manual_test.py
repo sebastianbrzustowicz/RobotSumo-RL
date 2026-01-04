@@ -3,15 +3,15 @@ import torch
 import numpy as np
 import os
 import sys
-from env.sumo_env import SumoEnv
-from model import ActorCriticNet, select_action
-from env.config import *
+from src.env.sumo_env import SumoEnv
+from src.agents.ppo.networks import ActorCriticNet, select_action
+from src.env.config import *
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # --- PLAYER CONFIGURATION ---
 PLAYER_1_TYPE = "ai" # "human" / "ai" / "dummy"
-MODEL_1_PATH = "models/favourite/A2C/model_v101.pt"
+MODEL_1_PATH = "models/history/model_v25.pt"
 
 PLAYER_2_TYPE = "ai" # "human" / "ai" / "dummy"
 MODEL_2_PATH = "models/sumo_push_master.pt"
@@ -62,6 +62,7 @@ def main():
 
     scores = [0, 0]
     round_count = 0
+    step_count = 0
     running = True
     state = env.reset(randPositions=False)
 
@@ -78,6 +79,7 @@ def main():
         act2 = get_action(PLAYER_2_TYPE, 1, state, model2)
 
         state, _, done, info = env.step(act1, act2)
+        step_count += 1
         env.render()
 
         if done:
@@ -95,7 +97,7 @@ def main():
             else:
                 result_text = "DRAW!"
 
-            print(f"\nRunda {round_count}: {result_text}")
+            print(f"\nRunda {round_count} (Steps: {step_count}): {result_text}")
             print(f"SCOREBOARD:")
             print(f"  R1: {scores[0]} pkt")
             print(f"  R2: {scores[1]} pkt")
@@ -103,6 +105,8 @@ def main():
 
             pygame.time.wait(1000)
             state = env.reset(randPositions=True)
+            step_count = 0
+            
             model1 = load_ai_model(MODEL_1_PATH, DEVICE, debug=False) if PLAYER_1_TYPE == "ai" else None
             model2 = load_ai_model(MODEL_2_PATH, DEVICE, debug=False) if PLAYER_2_TYPE == "ai" else None
 

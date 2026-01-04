@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from env.config import *
+from src.env.config import *
 
 class SumoRobot:
     def __init__(self, x, y, angle, mass=1.0):
