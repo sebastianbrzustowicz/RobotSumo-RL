@@ -43,10 +43,10 @@ class SumoRobot:
     def compute_kinematics(self, dt=1.0):
         self.angle += math.degrees(self.omega * dt)
         
-        rad = math.radians(-self.angle)
+        rad = math.radians(self.angle)
         
         forward_vec = np.array([math.cos(rad), math.sin(rad)])
-        side_vec = np.array([math.cos(rad + math.pi/2), math.sin(rad + math.pi/2)])
+        side_vec = np.array([-math.sin(rad), math.cos(rad)])
         
         self.x += (self.v * forward_vec[0] + self.v_side * side_vec[0]) * dt
         self.y += (self.v * forward_vec[1] + self.v_side * side_vec[1]) * dt
@@ -56,9 +56,9 @@ class SumoRobot:
         dv_x = impulse_vec[0] / self.mass
         dv_y = impulse_vec[1] / self.mass
         
-        rad = math.radians(-self.angle)
+        rad = math.radians(self.angle)
         forward_vec = np.array([math.cos(rad), math.sin(rad)])
-        side_vec = np.array([math.cos(rad + math.pi/2), math.sin(rad + math.pi/2)])
+        side_vec = np.array([-math.sin(rad), math.cos(rad)])
         
         self.v += np.dot(np.array([dv_x, dv_y]), forward_vec)
         self.v_side += np.dot(np.array([dv_x, dv_y]), side_vec)
@@ -67,7 +67,7 @@ class SumoRobot:
         """Return square vertices for SAT collision detection."""
         corners = []
         half = self.width / 2
-        rad = math.radians(-self.angle)
+        rad = math.radians(self.angle)
         for dx, dy in [(-half, -half), (half, -half), (half, half), (-half, half)]:
             rx = self.x + dx * math.cos(rad) - dy * math.sin(rad)
             ry = self.y + dx * math.sin(rad) + dy * math.cos(rad)

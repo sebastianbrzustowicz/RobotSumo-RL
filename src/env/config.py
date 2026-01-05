@@ -1,7 +1,7 @@
 import math
 
 # Display
-WIDTH, HEIGHT = 900, 700
+WIDTH, HEIGHT = 1100, 700
 FPS = 60
 M_TO_PX = 387
 

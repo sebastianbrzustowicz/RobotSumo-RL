@@ -1,3 +1,4 @@
+import os
 import pygame
 import numpy as np
 import math
@@ -5,7 +6,6 @@ from src.env.config import *
 from src.env.robot import SumoRobot
 from src.env.collisions import check_sat_collision, get_robot_global_velocity
 from src.env.renderer import SumoRenderer
-import os
 
 class SumoEnv:
     def __init__(self, render_mode=False, render_vectors=False):
@@ -113,16 +113,17 @@ class SumoEnv:
         dist = self.ARENA_RADIUS * 0.7
         line_angle_deg = np.random.uniform(0, 360) if randPositions else 0.0
         rad = np.radians(line_angle_deg)
+        
         off_x = dist * np.cos(rad)
         off_y = dist * np.sin(rad)
         
-        r1_x = self.center_x - off_x
-        r1_y = self.center_y - off_y
-        r2_x = self.center_x + off_x
-        r2_y = self.center_y + off_y
+        r1_x = -off_x
+        r1_y = -off_y
+        r2_x = off_x
+        r2_y = off_y
         
-        r1_angle = (360 - line_angle_deg) % 360
-        r2_angle = (360 - line_angle_deg + 180) % 360
+        r1_angle = line_angle_deg
+        r2_angle = (line_angle_deg + 180) % 360
         
         return {'x': r1_x, 'y': r1_y, 'angle': r1_angle}, {'x': r2_x, 'y': r2_y, 'angle': r2_angle}
 
@@ -135,14 +136,15 @@ class SumoEnv:
         dx_opp = target.x - viewer.x
         dy_opp = target.y - viewer.y
         dist_opp = math.hypot(dx_opp, dy_opp)
-        angle_to_opp = math.atan2(dy_opp, dx_opp) - global_angle_rad
         
-        dx_center = self.center_x - viewer.x
-        dy_center = self.center_y - viewer.y
-        dist_to_center = math.hypot(dx_center, dy_center)
-        
+        angle_to_opp_raw = math.atan2(dy_opp, dx_opp) - global_angle_rad
+        angle_to_opp = (angle_to_opp_raw + math.pi) % (2 * math.pi) - math.pi
+
+        dist_to_center = math.hypot(viewer.x, viewer.y)
         dist_to_edge = self.ARENA_RADIUS - dist_to_center
-        angle_to_center = math.atan2(dy_center, dx_center) - global_angle_rad
+        
+        angle_to_center_raw = math.atan2(-viewer.y, -viewer.x) - global_angle_rad
+        angle_to_center = (angle_to_center_raw + math.pi) % (2 * math.pi) - math.pi
 
         return np.array([
             v_fwd / MAX_SPEED, v_side / MAX_SPEED, omega / ROTATE_SPEED,
@@ -159,7 +161,7 @@ class SumoEnv:
         for idx, r in enumerate(self.robots):
             corners = r.get_corners()
             for corner in corners:
-                dist = math.hypot(corner[0] - self.center_x, corner[1] - self.center_y)
+                dist = math.hypot(corner[0], corner[1])
                 if dist > self.ARENA_RADIUS:
                     self.done = True
                     winner = 2 if idx == 0 else 1
