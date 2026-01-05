@@ -48,7 +48,7 @@ def train():
 
     if os.path.exists(cfg["master_path"]):
         agent.load(cfg["master_path"])
-        print(f"📁 Loaded MASTER")
+        print("📁 Loaded MASTER")
     else:
         agent.save(os.path.join(HISTORY_DIR, "model_v0.pt"))
         agent.save(cfg["master_path"])

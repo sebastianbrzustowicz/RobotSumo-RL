@@ -25,7 +25,6 @@ MAX_STEPS = 1000
 
 
 def load_ai_model(path, arch, device):
-    """Loads model weights based on architecture type."""
     try:
         if arch == "a2c":
             model = ActorCriticNet(obs_size=11).to(device)
@@ -33,7 +32,6 @@ def load_ai_model(path, arch, device):
             model = create_agent(11, 128).to(device)
         else:
             return None
-
         model.load_state_dict(torch.load(path, map_location=device))
         model.eval()
         return model
@@ -43,7 +41,6 @@ def load_ai_model(path, arch, device):
 
 
 def get_tournament_action(model, arch, obs, device):
-    """Retrieves action based on the specific agent architecture."""
     with torch.no_grad():
         if arch == "a2c":
             act, _, _, _ = select_action(model, obs, device)
@@ -69,8 +66,6 @@ def update_elo(ra, rb, score_a):
 
 def main():
     os.makedirs(RESULTS_DIR, exist_ok=True)
-
-    # 1. Collect models from directories
     models_metadata = []
 
     if os.path.exists(A2C_DIR):
@@ -78,9 +73,9 @@ def main():
             if f.endswith(".pt"):
                 models_metadata.append(
                     {
-                        "name": f"A2C_{f}",
+                        "name": f,
                         "path": os.path.join(A2C_DIR, f),
-                        "arch": "a2c",
+                        "arch": "A2C",
                     }
                 )
 
@@ -89,9 +84,9 @@ def main():
             if f.endswith(".pt"):
                 models_metadata.append(
                     {
-                        "name": f"PPO_{f}",
+                        "name": f,
                         "path": os.path.join(PPO_DIR, f),
-                        "arch": "ppo",
+                        "arch": "PPO",
                     }
                 )
 
@@ -99,36 +94,37 @@ def main():
         print("Not enough models to start a tournament.")
         return
 
-    # 2. Initialize ratings and load models
     print(f"Loading {len(models_metadata)} models on {DEVICE}...")
     loaded_models = {}
     elo_ratings = {}
 
     for m in models_metadata:
-        model_obj = load_ai_model(m["path"], m["arch"], DEVICE)
+        model_obj = load_ai_model(m["path"], m["arch"].lower(), DEVICE)
         if model_obj:
-            loaded_models[m["name"]] = {"model": model_obj, "arch": m["arch"]}
-            elo_ratings[m["name"]] = BASE_ELO
+            model_id = f"{m['arch']}_{m['name']}"
+            loaded_models[model_id] = {
+                "model": model_obj,
+                "arch": m["arch"].lower(),
+                "display_name": m["name"],
+                "type": m["arch"],
+            }
+            elo_ratings[model_id] = BASE_ELO
 
-    model_names = list(loaded_models.keys())
+    model_ids = list(loaded_models.keys())
     env = SumoEnv(render_mode=False)
 
-    # 3. Create round-robin pairs
     pairs = []
-    for i in range(len(model_names)):
-        for j in range(i + 1, len(model_names)):
-            pairs.append((model_names[i], model_names[j]))
+    for i in range(len(model_ids)):
+        for j in range(i + 1, len(model_ids)):
+            pairs.append((model_ids[i], model_ids[j]))
 
     total_matches = len(pairs) * N_FIGHTS
-    print(
-        f"Tournament Start: {len(model_names)} models, {total_matches} total matches."
-    )
+    print(f"Tournament Start: {len(model_ids)} models, {total_matches} total matches.")
 
-    # 4. Tournament Loop
     with tqdm(total=total_matches, desc="Tournament Progress") as pbar:
-        for name_a, name_b in pairs:
-            m_a_data = loaded_models[name_a]
-            m_b_data = loaded_models[name_b]
+        for id_a, id_b in pairs:
+            m_a_data = loaded_models[id_a]
+            m_b_data = loaded_models[id_b]
 
             for _ in range(N_FIGHTS):
                 state = env.reset(randPositions=True)
@@ -136,7 +132,6 @@ def main():
                     state = state[0]
                 done = False
                 steps = 0
-
                 while not done and steps < MAX_STEPS:
                     act_a = get_tournament_action(
                         m_a_data["model"], m_a_data["arch"], state[0], DEVICE
@@ -144,7 +139,6 @@ def main():
                     act_b = get_tournament_action(
                         m_b_data["model"], m_b_data["arch"], state[1], DEVICE
                     )
-
                     state, _, done, info = env.step(act_a, act_b)
                     if isinstance(state, tuple):
                         state = state[0]
@@ -152,29 +146,32 @@ def main():
 
                 winner = info.get("winner")
                 score = 1.0 if winner == 1 else (0.0 if winner == 2 else 0.5)
-
-                elo_ratings[name_a], elo_ratings[name_b] = update_elo(
-                    elo_ratings[name_a], elo_ratings[name_b], score
+                elo_ratings[id_a], elo_ratings[id_b] = update_elo(
+                    elo_ratings[id_a], elo_ratings[id_b], score
                 )
                 pbar.update(1)
 
-    # 5. Process Results
     sorted_ranking = sorted(elo_ratings.items(), key=lambda item: item[1], reverse=True)
+
+    header_fmt = "{:<5} | {:<10} | {:<25} | {:<5}"
+    row_fmt = "{:<5} | {:<10} | {:<25} | {:<5}"
 
     output = []
     output.append("=" * 60)
     output.append(f"🏆 TOURNAMENT RESULTS - {TIMESTAMP}")
     output.append(f"Fights per pair: {N_FIGHTS} | K-Factor: {K_FACTOR}")
     output.append("=" * 60)
-    output.append(f"{'Rank':<5} | {'Model Name':<35} | {'ELO'}")
+    output.append(header_fmt.format("Rank", "Agent", "Model File", "ELO"))
     output.append("-" * 60)
 
-    for i, (name, score) in enumerate(sorted_ranking):
-        output.append(f"{i+1:<5} | {name:<35} | {int(score)}")
+    for i, (m_id, score) in enumerate(sorted_ranking):
+        m_info = loaded_models[m_id]
+        output.append(
+            row_fmt.format(i + 1, m_info["type"], m_info["display_name"], int(score))
+        )
 
     result_text = "\n".join(output)
     print("\n" + result_text)
-
     with open(RESULTS_PATH, "w", encoding="utf-8") as f:
         f.write(result_text)
 
