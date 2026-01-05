@@ -1,6 +1,8 @@
 import torch
 import torch.nn.functional as F
+
 from src.agents.A2C.networks import ActorCriticNet
+
 
 class A2CAgent:
     def __init__(self, obs_size, lr, device, gamma, entropy_coef):
@@ -13,24 +15,24 @@ class A2CAgent:
     def compute_loss(self, ep_data):
         returns = []
         R = 0
-        for r in reversed(ep_data['rews']):
+        for r in reversed(ep_data["rews"]):
             R = r + self.gamma * R
             returns.insert(0, R)
-        
+
         ret = torch.tensor(returns, device=self.device, dtype=torch.float32).view(-1, 1)
-        lps = torch.cat(ep_data['lps']).view(-1, 1)
-        vals = torch.cat(ep_data['vals']).view(-1, 1)
-        ents = torch.cat(ep_data['ents']).view(-1, 1)
-        
+        lps = torch.cat(ep_data["lps"]).view(-1, 1)
+        vals = torch.cat(ep_data["vals"]).view(-1, 1)
+        ents = torch.cat(ep_data["ents"]).view(-1, 1)
+
         if ret.std() > 1e-5:
             ret = (ret - ret.mean()) / (ret.std() + 1e-8)
-            
+
         advantage = ret - vals.detach()
-        
+
         actor_loss = -(lps * advantage).mean()
         critic_loss = 0.5 * F.mse_loss(vals, ret)
         entropy_loss = -self.entropy_coef * ents.mean()
-        
+
         return actor_loss + critic_loss + entropy_loss
 
     def update(self, loss):

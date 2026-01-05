@@ -1,20 +1,23 @@
 import math
+
 import numpy as np
+
 from src.env.config import *
+
 
 class SumoRobot:
     def __init__(self, x, y, angle, mass=1.0):
         self.x = x
         self.y = y
-        self.angle = angle 
-        
-        self.v = 0.0          
-        self.v_side = 0.0     
-        self.omega = 0.0      
-        
+        self.angle = angle
+
+        self.v = 0.0
+        self.v_side = 0.0
+        self.omega = 0.0
+
         self.mass = mass
         self.width = ROBOT_SIZE_PX
-        
+
         self.accel = ACCELERATION / mass
         self.accel_angular = ACCEL_ANGULAR / mass
         self.friction = FRICTION
@@ -29,25 +32,25 @@ class SumoRobot:
             self.v = min(self.v + self.accel, v_target)
         elif self.v > v_target:
             self.v = max(self.v - self.accel, v_target)
-            
+
         if self.omega < omega_target:
             self.omega = min(self.omega + self.accel_angular, omega_target)
         elif self.omega > omega_target:
             self.omega = max(self.omega - self.accel_angular, omega_target)
 
         if abs(v_target_raw) < 0.05:
-            self.v *= (1.0 - self.friction)
-            
-        self.v_side *= (1.0 - LATERAL_FRICTION)
+            self.v *= 1.0 - self.friction
+
+        self.v_side *= 1.0 - LATERAL_FRICTION
 
     def compute_kinematics(self, dt=1.0):
         self.angle += math.degrees(self.omega * dt)
-        
+
         rad = math.radians(self.angle)
-        
+
         forward_vec = np.array([math.cos(rad), math.sin(rad)])
         side_vec = np.array([-math.sin(rad), math.cos(rad)])
-        
+
         self.x += (self.v * forward_vec[0] + self.v_side * side_vec[0]) * dt
         self.y += (self.v * forward_vec[1] + self.v_side * side_vec[1]) * dt
 
@@ -55,11 +58,11 @@ class SumoRobot:
         """Convert collision impulse into local velocity changes."""
         dv_x = impulse_vec[0] / self.mass
         dv_y = impulse_vec[1] / self.mass
-        
+
         rad = math.radians(self.angle)
         forward_vec = np.array([math.cos(rad), math.sin(rad)])
         side_vec = np.array([-math.sin(rad), math.cos(rad)])
-        
+
         self.v += np.dot(np.array([dv_x, dv_y]), forward_vec)
         self.v_side += np.dot(np.array([dv_x, dv_y]), side_vec)
 

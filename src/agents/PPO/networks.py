@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+
 class ActorCriticNet(nn.Module):
     def __init__(self, obs_size=11, h1=128, h2=128):
         super().__init__()
@@ -10,7 +11,7 @@ class ActorCriticNet(nn.Module):
             nn.LayerNorm(h1),
             nn.ReLU(),
             nn.Linear(h1, h2),
-            nn.ReLU()
+            nn.ReLU(),
         )
         self.mu = nn.Linear(h2, 2)
         self.sigma = nn.Linear(h2, 2)
@@ -22,6 +23,7 @@ class ActorCriticNet(nn.Module):
         std = F.softplus(self.sigma(features)) + 1e-3
         value = self.value_head(features)
         return mu, std, value
+
 
 def select_action(model, state, device):
     state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)

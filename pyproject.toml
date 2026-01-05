@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mini-sumo-rl"
+version = "0.1.0"
+description = "Reinforcement Learning for Mini-Sumo robots using PPO and A2C"
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.10"
+authors = [
+    { name = "Sebastian", email = "Se.Brzustowicz@gmail.com" }
+]
+dependencies = [
+    "torch>=2.9.1",
+    "numpy>=2.2.6",
+    "pygame>=2.6.1",
+    "matplotlib>=3.10.6",
+    "tqdm>=4.67.1",
+    "mlflow>=3.4.0",
+    "pyyaml>=6.0.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "ruff",
+    "pytest",
+]
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "I"]
+
+[tool.setuptools]
+packages = ["src"]

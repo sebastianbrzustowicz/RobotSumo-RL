@@ -4,3 +4,4 @@
 models/
 configs/
 mlruns/
+mini_sumo_rl.egg-info/

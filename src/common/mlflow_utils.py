@@ -1,12 +1,13 @@
 import mlflow
 import yaml
 
+
 class MLflowManager:
     def __init__(self, experiment_name="Mino_Sumo"):
         mlflow.set_experiment(experiment_name)
 
     def load_config(self, config_path):
-        with open(config_path, 'r') as f:
+        with open(config_path, "r") as f:
             return yaml.safe_load(f)
 
     def start_run(self, run_name, config):
