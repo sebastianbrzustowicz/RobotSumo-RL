@@ -20,7 +20,7 @@ cfg = {
     "max_steps": 1000,
     "render": False,
     "model_dir": "models",
-    "master_path": "models/sumo_push_master.pt",
+    "master_path": "models/a2c_push_master.pt",
 }
 
 HISTORY_DIR = os.path.join(cfg["model_dir"], "history/A2C")

@@ -34,7 +34,6 @@ ax.grid(True, alpha=0.3)
 def load_ai_model(path, device):
     if not os.path.exists(path):
         return None
-    # Use ActorCriticNet from A2C agent
     model = ActorCriticNet(obs_size=11).to(device)
     try:
         model.load_state_dict(torch.load(path, map_location=device))
@@ -115,13 +114,26 @@ def main():
 
             done = env_done or (step_count + 1 >= MAX_STEPS)
 
+            # Adjust win/lose info for robot 2 perspective
+            actual_winner = info.get("winner")
+
+            info_for_robot2 = info.copy()
+
+            if actual_winner == 1:
+                info_for_robot2["winner"] = 2
+            elif actual_winner == 2:
+                info_for_robot2["winner"] = 1
+            else:
+                info_for_robot2["winner"] = actual_winner
+
             # Calc rewards for plot
             r1_s = get_reward(
                 None, info, done, state[0], info.get("is_collision", False)
             )
             r2_s = get_reward(
-                None, info, done, state[1], info.get("is_collision", False)
+                None, info_for_robot2, done, state[1], info.get("is_collision", False)
             )
+
             total_r1 += r1_s
             total_r2 += r2_s
 
@@ -135,7 +147,8 @@ def main():
                 line2.set_data(steps_h, r2_h)
                 ax.relim()
                 ax.autoscale_view()
-                ax.set_title(f"Round {round_count+1} | Score: {scores[0]}-{scores[1]}")
+                # ax.set_title(f"Round {round_count+1} | Score: {scores[0]}-{scores[1]}")
+                ax.set_title(f"Cumulative Reward")
                 fig.canvas.flush_events()
 
             sys.stdout.write(
@@ -152,7 +165,6 @@ def main():
             scores[0] += 1
         elif winner == 2:
             scores[1] += 1
-
         print(f"\nWinner: {winner} | Total Score: {scores[0]} - {scores[1]}")
 
         pygame.time.wait(1500)

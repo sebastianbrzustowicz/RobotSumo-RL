@@ -12,9 +12,9 @@ from src.env.sumo_env import SumoEnv
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 PLAYER_1_TYPE = "ai"
-MODEL_1_PATH = "models/sumo_push_master.pt"
+MODEL_1_PATH = "models/favourite/PPO/model_v59.pt"
 PLAYER_2_TYPE = "ai"
-MODEL_2_PATH = "models/sumo_push_master.pt"
+MODEL_2_PATH = "models/favourite/PPO/model_v59.pt"
 
 MAX_STEPS = 1000
 
@@ -107,12 +107,25 @@ def main():
 
             done = env_done or (step_count + 1 >= MAX_STEPS)
 
+            # --- Adjust win/lose info for robot 2 perspective ---
+            actual_winner = info.get("winner")
+            info_for_robot2 = info.copy()
+
+            if actual_winner == 1:
+                info_for_robot2["winner"] = 2
+            elif actual_winner == 2:
+                info_for_robot2["winner"] = 1
+            else:
+                info_for_robot2["winner"] = actual_winner
+            # ------------------------------------
+
             r1_s = get_reward(
                 None, info, done, state[0], info.get("is_collision", False)
             )
             r2_s = get_reward(
-                None, info, done, state[1], info.get("is_collision", False)
+                None, info_for_robot2, done, state[1], info.get("is_collision", False)
             )
+
             total_r1 += r1_s
             total_r2 += r2_s
 
@@ -125,7 +138,8 @@ def main():
                 line2.set_data(steps_h, r2_h)
                 ax.relim()
                 ax.autoscale_view()
-                ax.set_title(f"Round {round_count+1} | Score: {scores[0]}-{scores[1]}")
+                # ax.set_title(f"Round {round_count+1} | Score: {scores[0]}-{scores[1]}")
+                ax.set_title(f"Cumulative Reward")
                 fig.canvas.flush_events()
 
             sys.stdout.write(

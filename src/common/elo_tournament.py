@@ -7,6 +7,7 @@ from tqdm import tqdm
 
 from src.agents.A2C.networks import ActorCriticNet, select_action
 from src.agents.PPO.agent import create_agent
+from src.common.tournament_plots import save_tournament_plots
 from src.env.sumo_env import SumoEnv
 
 # --- CONFIGURATION ---
@@ -14,8 +15,10 @@ A2C_DIR = "models/favourite/A2C/"
 PPO_DIR = "models/favourite/PPO/"
 
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
-RESULTS_DIR = "results/"
-RESULTS_PATH = os.path.join(RESULTS_DIR, f"tournament_elo_{TIMESTAMP}.txt")
+CURRENT_TOURNAMENT_DIR = os.path.join(
+    "results", "tournaments", f"tournament_elo_{TIMESTAMP}"
+)
+LEADERBOARD_PATH = os.path.join(CURRENT_TOURNAMENT_DIR, "leaderboard.txt")
 
 N_FIGHTS = 50
 BASE_ELO = 1200
@@ -65,7 +68,8 @@ def update_elo(ra, rb, score_a):
 
 
 def main():
-    os.makedirs(RESULTS_DIR, exist_ok=True)
+    os.makedirs(CURRENT_TOURNAMENT_DIR, exist_ok=True)
+
     models_metadata = []
 
     if os.path.exists(A2C_DIR):
@@ -172,10 +176,15 @@ def main():
 
     result_text = "\n".join(output)
     print("\n" + result_text)
-    with open(RESULTS_PATH, "w", encoding="utf-8") as f:
+
+    with open(LEADERBOARD_PATH, "w", encoding="utf-8") as f:
         f.write(result_text)
 
-    print(f"\n✅ Results saved to: {RESULTS_PATH}")
+    save_tournament_plots(
+        sorted_ranking, loaded_models, CURRENT_TOURNAMENT_DIR, TIMESTAMP
+    )
+
+    print(f"\nResults and plots saved to: {CURRENT_TOURNAMENT_DIR}")
 
 
 if __name__ == "__main__":

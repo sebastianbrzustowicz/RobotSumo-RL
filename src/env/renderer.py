@@ -125,7 +125,7 @@ class SumoRenderer:
                 self.screen, (255, 0, 0), start_pos, self._to_screen(edge_x, edge_y), 2
             )
 
-    def draw_ui(self, robots, observations=None):
+    def draw_ui(self, robots, observations=None, names=None, archs=None):
         if not self.show_ui:
             return
 
@@ -149,18 +149,34 @@ class SumoRenderer:
         ]
 
         font_sub = pygame.font.SysFont("Consolas", 10, bold=True)
+        font_info = pygame.font.SysFont("Consolas", 11, bold=False)
 
         for i, data in enumerate(ui_configs):
             header = self.font_header.render(data["name"], True, data["color"])
             self.screen.blit(header, (data["x"], 20))
 
-            curr_y = 45
+            curr_y = 42
+
+            if names and archs:
+                display_name = (
+                    names[i] if len(names[i]) <= 20 else names[i][:17] + "..."
+                )
+                name_txt = font_info.render(f"Name: {display_name}", True, (50, 50, 50))
+                self.screen.blit(name_txt, (data["x"], curr_y))
+                curr_y += 14
+
+                arch_txt = font_info.render(f"Arch: {archs[i]}", True, (50, 50, 50))
+                self.screen.blit(arch_txt, (data["x"], curr_y))
+                curr_y += 20
+            else:
+                curr_y += 5
+
             if observations is not None:
                 header_obs = self.font_main.render(
                     "OBSERVED STATE:", True, (100, 100, 100)
                 )
                 self.screen.blit(header_obs, (data["x"], curr_y))
-                curr_y += 25
+                curr_y += 22
 
                 for j, (main_txt, sub_txt) in enumerate(labels_info):
                     val = observations[i][j]
@@ -188,7 +204,72 @@ class SumoRenderer:
                     val_surf = self.font_main.render(val_str, True, val_color)
                     self.screen.blit(val_surf, (data["x"] + 80, curr_y))
 
-                    curr_y += 18
+                    curr_y += 17
+
+    def draw_actions(self, actions):
+        """
+        It draws the current decisions (actions) made by the models for both robots.
+        """
+        if not self.show_ui or actions is None:
+            return
+
+        ui_positions = [20, WIDTH - 205]
+        labels = ["LINEAR", "ANGULAR"]
+
+        for i, (action, x_pos) in enumerate(zip(actions, ui_positions)):
+            curr_y = 290
+
+            header_act = self.font_main.render("MODEL ACTIONS:", True, (100, 100, 100))
+            self.screen.blit(header_act, (x_pos, curr_y))
+            curr_y += 25
+
+            for j, label in enumerate(labels):
+                val = action[j]
+
+                label_surf = self.font_main.render(f"{label}:", True, (0, 0, 0))
+                self.screen.blit(label_surf, (x_pos, curr_y))
+
+                val_str = f"{val:6.2f}"
+                val_surf = self.font_main.render(val_str, True, (0, 0, 0))
+                self.screen.blit(val_surf, (x_pos + 80, curr_y))
+
+                bar_width = 80
+                bar_height = 10
+                bar_x = x_pos
+                bar_y = curr_y + 18
+
+                pygame.draw.rect(
+                    self.screen, (220, 220, 220), (bar_x, bar_y, bar_width, bar_height)
+                )
+
+                mid_x = bar_x + bar_width // 2
+                fill_w = int((val / 1.0) * (bar_width / 2))
+
+                bar_color = (0, 180, 0) if val > 0 else (180, 0, 0)
+
+                if fill_w > 0:
+                    pygame.draw.rect(
+                        self.screen, bar_color, (mid_x, bar_y, fill_w, bar_height)
+                    )
+                else:
+                    pygame.draw.rect(
+                        self.screen,
+                        bar_color,
+                        (mid_x + fill_w, bar_y, abs(fill_w), bar_height),
+                    )
+
+                pygame.draw.rect(
+                    self.screen, (0, 0, 0), (bar_x, bar_y, bar_width, bar_height), 1
+                )
+                pygame.draw.line(
+                    self.screen,
+                    (0, 0, 0),
+                    (mid_x, bar_y),
+                    (mid_x, bar_y + bar_height),
+                    1,
+                )
+
+                curr_y += 35
 
     def clear_trails(self):
         self.trails[0].clear()

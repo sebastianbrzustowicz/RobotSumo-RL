@@ -6,3 +6,6 @@ configs/
 mlruns/
 mini_sumo_rl.egg-info/
 venv/
+
+src/agents/SAC/
+results/

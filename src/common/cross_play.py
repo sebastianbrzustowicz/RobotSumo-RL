@@ -5,24 +5,26 @@ import matplotlib.pyplot as plt
 import pygame
 import torch
 
-from src.agents.A2C.networks import ActorCriticNet, select_action
+from src.agents.A2C.networks import ActorCriticNet
+from src.agents.A2C.networks import select_action as a2c_select
 from src.agents.A2C.rewards import get_reward
-from src.agents.PPO.agent import create_agent
+from src.agents.PPO.agent import create_agent as create_ppo_agent
+from src.agents.SAC.networks import GaussianActor as SACActor
 from src.env.sumo_env import SumoEnv
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # --- PLAYER CONFIGURATION ---
 # Types: "ai" / "human" / "dummy"
-# Architecture:  "a2c" / "ppo"
+# Arch:  "a2c" / "ppo" / "sac"
 
-PLAYER_1_TYPE = "human"
-PLAYER_1_ARCH = "a2c"
-MODEL_1_PATH = "models/favourite/A2C/model_v70.pt"
+PLAYER_1_TYPE = "ai"
+PLAYER_1_ARCH = "sac"
+MODEL_1_PATH = "models/favourite/SAC/model_v21.pt"
 
 PLAYER_2_TYPE = "ai"
 PLAYER_2_ARCH = "ppo"
-MODEL_2_PATH = "models/favourite/PPO/model_v59.pt"
+MODEL_2_PATH = "models/favourite/PPO/model_v44.pt"
 
 MAX_STEPS = 1000
 
@@ -39,29 +41,42 @@ ax.grid(True, alpha=0.3)
 
 def load_ai_model(path, arch, device):
     if not os.path.exists(path):
-        print(f"⚠️ Model not found: {path}")
+        print(f"Model not found: {path}")
         return None
 
     try:
+        sd = torch.load(path, map_location=device)
+
         if arch == "a2c":
             model = ActorCriticNet(obs_size=11).to(device)
+            model.load_state_dict(sd)
         elif arch == "ppo":
-            model = create_agent(11, 128).to(device)
+            model = create_ppo_agent(11, 128).to(device)
+            model.load_state_dict(sd)
+        elif arch == "sac":
+            model = SACActor(obs_size=11, action_dim=2).to(device)
+
+            actor_sd = {}
+            if any(k.startswith("actor.") for k in sd.keys()):
+                for k, v in sd.items():
+                    if k.startswith("actor."):
+                        actor_sd[k[6:]] = v
+            else:
+                actor_sd = sd
+            model.load_state_dict(actor_sd)
         else:
             return None
 
-        model.load_state_dict(torch.load(path, map_location=device))
         model.eval()
         return model
     except Exception as e:
-        print(f"Error loading {arch.upper()}: {e}")
+        print(f"Loading error {arch.upper()}: {e}")
         return None
 
 
 def get_action(p_type, arch, robot_idx, state, model):
     if p_type == "dummy":
         return [0.0, 0.0]
-
     if p_type == "human":
         keys = pygame.key.get_pressed()
         v, omega = 0.0, 0.0
@@ -89,19 +104,22 @@ def get_action(p_type, arch, robot_idx, state, model):
         obs_vec = state[robot_idx]
         with torch.no_grad():
             if arch == "a2c":
-                act, _, _, _ = select_action(model, obs_vec, DEVICE)
+                act, _, _, _ = a2c_select(model, obs_vec, DEVICE)
                 return act.flatten()
             elif arch == "ppo":
                 obs_t = torch.FloatTensor(obs_vec).to(DEVICE).unsqueeze(0)
                 action_params, _ = model(obs_t)
                 mu, _ = torch.chunk(action_params, 2, dim=-1)
                 return torch.tanh(mu).cpu().numpy().flatten()
+            elif arch == "sac":
+                obs_t = torch.FloatTensor(obs_vec).to(DEVICE).unsqueeze(0)
+                _, _, mu = model.sample(obs_t)
+                return mu.cpu().numpy().flatten()
     return [0.0, 0.0]
 
 
 def main():
     env = SumoEnv(render_mode=True)
-
     m1 = (
         load_ai_model(MODEL_1_PATH, PLAYER_1_ARCH, DEVICE)
         if PLAYER_1_TYPE == "ai"
@@ -116,7 +134,7 @@ def main():
     scores = [0, 0]
     round_count = 0
 
-    print(f"\n🚀 MATCH START: {PLAYER_1_ARCH.upper()} vs {PLAYER_2_ARCH.upper()}")
+    print(f"\nCROSS-PLAY: {PLAYER_1_ARCH.upper()} vs {PLAYER_2_ARCH.upper()}")
 
     while True:
         state = env.reset(randPositions=True)
@@ -143,16 +161,22 @@ def main():
 
             done = env_done or (step_count + 1 >= MAX_STEPS)
 
-            # Calculate rewards using A2C reward function for cross-comparison
+            # Perspective for robot 2
+            info_r2 = info.copy()
+            if info.get("winner") == 1:
+                info_r2["winner"] = 2
+            elif info.get("winner") == 2:
+                info_r2["winner"] = 1
+
             r1_s = get_reward(
                 None, info, done, state[0], info.get("is_collision", False)
             )
             r2_s = get_reward(
-                None, info, done, state[1], info.get("is_collision", False)
+                None, info_r2, done, state[1], info.get("is_collision", False)
             )
+
             total_r1 += r1_s
             total_r2 += r2_s
-
             steps_h.append(step_count)
             r1_h.append(total_r1)
             r2_h.append(total_r2)
@@ -162,9 +186,6 @@ def main():
                 line2.set_data(steps_h, r2_h)
                 ax.relim()
                 ax.autoscale_view()
-                ax.set_title(
-                    f"Round {round_count+1} | {PLAYER_1_ARCH} vs {PLAYER_2_ARCH}"
-                )
                 fig.canvas.flush_events()
 
             sys.stdout.write(
@@ -173,21 +194,22 @@ def main():
             sys.stdout.flush()
 
             step_count += 1
-            env.render()
+            env.render(
+                names=[os.path.basename(MODEL_1_PATH), os.path.basename(MODEL_2_PATH)],
+                archs=[PLAYER_1_ARCH.upper(), PLAYER_2_ARCH.upper()],
+            )
 
         round_count += 1
-        winner = info.get("winner")
+        winner = info.get("winner", 0)
         if winner == 1:
             scores[0] += 1
         elif winner == 2:
             scores[1] += 1
-
-        print(f"\n--- Round {round_count} Over ---")
-        print(f"Winner: Robot {winner} | Score: {scores[0]} - {scores[1]}")
+        print(
+            f"\n--- Round {round_count} Over. Winner: {winner} | Score: {scores[0]}-{scores[1]} ---"
+        )
 
         pygame.time.wait(1000)
-
-        # Hot-reload models for live progress monitoring
         if PLAYER_1_TYPE == "ai":
             m1 = load_ai_model(MODEL_1_PATH, PLAYER_1_ARCH, DEVICE)
         if PLAYER_2_TYPE == "ai":

@@ -48,6 +48,13 @@ The simulation environment is built to reflect official Mini-Sumo competition st
 * **Collision System:** Real-time contact handling is powered by the **Separating Axis Theorem (SAT)**. It calculates non-elastic overlaps and applies physical impulses, affecting both forward and lateral velocities based on the robots' mass and restitution.
 * **Start Conditions:** Features a standard starting distance (~70% of arena radius) with support for both fixed positions and randomized 360-degree orientations to enhance training robustness.
 
+## Future Potential Improvements
+
+* Implementation of the **SAC** algorithm.
+* Expanding the input state vector with estimated **opponent velocity** based on recent lidar sensor samples.
+* Implementing a **BSP block** in the robot to limit linear and angular velocity.
+* Create a script to analyze model decisions and create **statistics** (e.g., average steps, spin count, number of rear-end collisions).
+
 ## License
 
 Mini-Sumo-RL is released under the MIT license.

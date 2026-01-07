@@ -26,7 +26,7 @@ cfg = {
     "max_steps": 1000,
     "episodes": 100000,
     "render": False,
-    "master_path": "models/sumo_push_master.pt",
+    "master_path": "models/ppo_push_master.pt",
     "model_dir": "models/",
 }
 

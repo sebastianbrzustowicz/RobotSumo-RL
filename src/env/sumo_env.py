@@ -56,10 +56,15 @@ class SumoEnv:
         self.done = False
 
         self.has_collision_occurred = False
+        self.last_action1 = np.zeros(2)
+        self.last_action2 = np.zeros(2)
 
         return self._get_all_obs()
 
     def step(self, action1, action2):
+        self.last_action1 = action1
+        self.last_action2 = action2
+
         for r, action in zip(self.robots, [action1, action2]):
             r.compute_dynamics(action[0], action[1])
             r.compute_kinematics()
@@ -195,7 +200,7 @@ class SumoEnv:
                 break
         return self._get_all_obs(), [0.0, 0.0], self.done, {"winner": winner}
 
-    def render(self):
+    def render(self, names=None, archs=None):
         if not self.render_mode or self.renderer is None:
             return
         self.clock.tick(FPS)
@@ -205,5 +210,8 @@ class SumoEnv:
             self.renderer.draw_observations_visual(self.robots, obs)
         self.renderer.draw_robot(self.robot1, ROBOT_COLOR_1, 0)
         self.renderer.draw_robot(self.robot2, ROBOT_COLOR_2, 1)
-        self.renderer.draw_ui(self.robots, observations=obs)
+        self.renderer.draw_ui(self.robots, observations=obs, names=names, archs=archs)
+        actions = [self.last_action1, self.last_action2]
+        self.renderer.draw_actions(actions)
+
         pygame.display.flip()
