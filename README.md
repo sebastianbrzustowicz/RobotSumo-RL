@@ -1,6 +1,8 @@
-# Mini-Sumo RL Training System
+# RobotSumo RL Training System
 
-This project implements an autonomous Mini-Sumo combat agent trained using Reinforcement Learning (Actor-Critic architecture). The system utilizes a parallelized training environment featuring a self-play mechanism, where the learning agent competes against a "Master" model or its own historical versions to continuously evolve and refine its combat strategies. Key features include a sophisticated reward shaping engine designed to promote aggressive forward movement, precise aiming, and strategic ring positioning while penalizing passive behaviors like spinning or backward driving.
+This project implements an autonomous RobotSumo combat agent trained using Reinforcement Learning (Actor-Critic architecture). The system utilizes a specialized training environment featuring a **self-play mechanism**, where the learning agent competes against a "Master" model or its own historical versions to continuously evolve and refine its combat strategies. 
+
+Key features include a sophisticated **reward shaping engine** designed to promote aggressive forward movement, precise aiming, and strategic ring positioning while penalizing passive behaviors like spinning or backward driving.
 
 <p align="center">
   <img src="resources/Fight_1.gif" height="300px"/>
@@ -78,10 +80,10 @@ The input state vector (`state_ai`) consists of 11 normalized values, providing 
 | 2 | `omega` | Rotational velocity | [-1.0, 1.0] | Wheel Encoders / Gyroscope (IMU) |
 | 3 | `pos_x` | X position on the arena | [-1.0, 1.0] | Odometry / Localization Fusion |
 | 4 | `pos_y` | Y position on the arena | [-1.0, 1.0] | Odometry / Localization Fusion |
-| 5 | `dist_opp_norm` | Normalized distance to the opponent | [0.0, 1.0] | Distance Sensors (IR/Ultrasonic) / LiDAR |
+| 5 | `dist_opp` | Normalized distance to the opponent | [0.0, 1.0] | Distance Sensors (IR/Ultrasonic) / LiDAR |
 | 6 | `sin_to_opp` | Sine of the angle to the opponent | [-1.0, 1.0] | Geometry (based on distance sensors) |
 | 7 | `cos_to_opp` | Cosine of the angle to the opponent | [-1.0, 1.0] | Geometry (based on distance sensors) |
-| 8 | `dist_edge_norm` | Distance to the nearest arena edge | [0.0, 1.0] | Floor Sensors (Line detectors) / Geometry |
+| 8 | `dist_edge` | Distance to the nearest arena edge | [0.0, 1.0] | Floor Sensors (Line detectors) / Geometry |
 | 9 | `sin_to_center` | Direction relative to the arena center | [-1.0, 1.0] | Line sensors / State Estimation + Geometry |
 | 10 | `cos_to_center` | Direction relative to the arena center | [-1.0, 1.0] | Line sensors / State Estimation + Geometry |
 
