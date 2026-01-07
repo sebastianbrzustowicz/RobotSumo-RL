@@ -19,10 +19,10 @@ from src.env.sumo_env import SumoEnv
 cfg = {
     "lr": 3e-4,
     "gamma": 0.99,
-    "ppo_epochs": 10,           # Number of optimization epochs per update cycle
-    "eps_clip": 0.2,            # Clipping parameter for the policy objective to prevent large updates
-    "entropy_coef": 0.01,       # Weight of the entropy bonus to encourage exploration
-    "update_every_steps": 2048, # Total steps collected before performing an update
+    "ppo_epochs": 10,  # Number of optimization epochs per update cycle
+    "eps_clip": 0.2,  # Clipping parameter for the policy objective to prevent large updates
+    "entropy_coef": 0.01,  # Weight of the entropy bonus to encourage exploration
+    "update_every_steps": 2048,  # Total steps collected before performing an update
     "max_steps": 1000,
     "episodes": 100000,
     "render": False,

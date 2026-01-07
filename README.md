@@ -101,7 +101,7 @@ The reward system is designed to enforce aggressive combat and strategic surviva
 * **Efficiency:** A constant time penalty per step to encourage the fastest possible victory.
 
 ## Environment Specification
-The simulation environment is built to reflect official Mini-Sumo competition standards with high physical fidelity:
+The simulation environment is built to reflect official RobotSumo competition standards with high physical fidelity:
 
 * **Arena:** 
     * **(Dohyo):** Modeled with a standard radius and a defined center point. The environment strictly enforces boundary conditions; a match ends (Terminal State) as soon as any corner of a robot's chassis exceeds the `ARENA_RADIUS`.     
@@ -119,7 +119,7 @@ The simulation environment is built to reflect official Mini-Sumo competition st
 
 ## License
 
-Mini-Sumo-RL is released under the MIT license.
+RobotSumo-RL is released under the MIT license.
 
 ## Author
 

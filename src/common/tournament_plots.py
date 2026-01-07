@@ -30,7 +30,7 @@ def save_tournament_plots(sorted_ranking, loaded_models, save_dir, timestamp):
     colors = [color_map.get(algo, color_map["UNKNOWN"]) for algo in algo_types]
     bars = plt.bar(names, elos, color=colors, edgecolor="black", alpha=0.8)
     plt.axhline(y=1200, color="red", linestyle="--", alpha=0.6, label="Base ELO (1200)")
-    #plt.title(f"Individual Model Rankings (ELO) - {timestamp}", fontsize=14)
+    # plt.title(f"Individual Model Rankings (ELO) - {timestamp}", fontsize=14)
     plt.title(f"Individual Model Rankings (ELO)")
     plt.ylabel("ELO Score")
     plt.xticks(rotation=45, ha="right")

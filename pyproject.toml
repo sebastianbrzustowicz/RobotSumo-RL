@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "mini-sumo-rl"
+name = "RobotSumo-RL"
 version = "0.1.0"
-description = "Reinforcement Learning for Mini-Sumo robots using PPO and A2C"
+description = "Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms"
 readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">=3.10"

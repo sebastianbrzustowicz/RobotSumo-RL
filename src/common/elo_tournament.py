@@ -39,9 +39,9 @@ def load_ai_model(path, arch, device):
             model = SACActor(obs_size=11, action_dim=2).to(device)
         else:
             return None
-        
+
         state_dict = torch.load(path, map_location=device)
-        
+
         if arch == "sac":
             new_state_dict = {}
             if any(k.startswith("actor.") for k in state_dict.keys()):
@@ -91,11 +91,7 @@ def main():
 
     models_metadata = []
 
-    dir_map = {
-        A2C_DIR: "A2C",
-        PPO_DIR: "PPO",
-        SAC_DIR: "SAC"
-    }
+    dir_map = {A2C_DIR: "A2C", PPO_DIR: "PPO", SAC_DIR: "SAC"}
 
     for directory, arch_name in dir_map.items():
         if os.path.exists(directory):

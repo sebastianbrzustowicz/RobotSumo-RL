@@ -5,6 +5,7 @@ models/
 configs/
 mlruns/
 mini_sumo_rl.egg-info/
+robot_sumo_rl.egg-info/
 venv/
 
 results/

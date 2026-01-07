@@ -13,9 +13,9 @@ from src.env.sumo_env import SumoEnv
 
 # --- FULL CONFIGURATION ---
 cfg = {
-    "lr": 3e-4,             # 1e-3 is good for A2C stability
-    "gamma": 0.99,          # Discount factor
-    "entropy_coef": 0.01,   # Entropy weight (encourages exploration)
+    "lr": 3e-4,  # 1e-3 is good for A2C stability
+    "gamma": 0.99,  # Discount factor
+    "entropy_coef": 0.01,  # Entropy weight (encourages exploration)
     "episodes": 100000,
     "max_steps": 1000,
     "render": False,
