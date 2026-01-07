@@ -7,12 +7,14 @@ from tqdm import tqdm
 
 from src.agents.A2C.networks import ActorCriticNet, select_action
 from src.agents.PPO.agent import create_agent
+from src.agents.SAC.networks import GaussianActor as SACActor
 from src.common.tournament_plots import save_tournament_plots
 from src.env.sumo_env import SumoEnv
 
 # --- CONFIGURATION ---
 A2C_DIR = "models/favourite/A2C/"
 PPO_DIR = "models/favourite/PPO/"
+SAC_DIR = "models/favourite/SAC/"
 
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
 CURRENT_TOURNAMENT_DIR = os.path.join(
@@ -33,9 +35,22 @@ def load_ai_model(path, arch, device):
             model = ActorCriticNet(obs_size=11).to(device)
         elif arch == "ppo":
             model = create_agent(11, 128).to(device)
+        elif arch == "sac":
+            model = SACActor(obs_size=11, action_dim=2).to(device)
         else:
             return None
-        model.load_state_dict(torch.load(path, map_location=device))
+        
+        state_dict = torch.load(path, map_location=device)
+        
+        if arch == "sac":
+            new_state_dict = {}
+            if any(k.startswith("actor.") for k in state_dict.keys()):
+                for k, v in state_dict.items():
+                    if k.startswith("actor."):
+                        new_state_dict[k[6:]] = v
+                state_dict = new_state_dict
+
+        model.load_state_dict(state_dict)
         model.eval()
         return model
     except Exception as e:
@@ -53,6 +68,10 @@ def get_tournament_action(model, arch, obs, device):
             action_params, _ = model(obs_t)
             mu, _ = torch.chunk(action_params, 2, dim=-1)
             return torch.tanh(mu).cpu().numpy().flatten()
+        elif arch == "sac":
+            obs_t = torch.FloatTensor(obs).to(device).unsqueeze(0)
+            _, _, mu = model.sample(obs_t)
+            return mu.cpu().numpy().flatten()
     return np.zeros(2)
 
 
@@ -72,27 +91,23 @@ def main():
 
     models_metadata = []
 
-    if os.path.exists(A2C_DIR):
-        for f in os.listdir(A2C_DIR):
-            if f.endswith(".pt"):
-                models_metadata.append(
-                    {
-                        "name": f,
-                        "path": os.path.join(A2C_DIR, f),
-                        "arch": "A2C",
-                    }
-                )
+    dir_map = {
+        A2C_DIR: "A2C",
+        PPO_DIR: "PPO",
+        SAC_DIR: "SAC"
+    }
 
-    if os.path.exists(PPO_DIR):
-        for f in os.listdir(PPO_DIR):
-            if f.endswith(".pt"):
-                models_metadata.append(
-                    {
-                        "name": f,
-                        "path": os.path.join(PPO_DIR, f),
-                        "arch": "PPO",
-                    }
-                )
+    for directory, arch_name in dir_map.items():
+        if os.path.exists(directory):
+            for f in os.listdir(directory):
+                if f.endswith(".pt"):
+                    models_metadata.append(
+                        {
+                            "name": f,
+                            "path": os.path.join(directory, f),
+                            "arch": arch_name,
+                        }
+                    )
 
     if len(models_metadata) < 2:
         print("Not enough models to start a tournament.")

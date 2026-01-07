@@ -20,11 +20,11 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 PLAYER_1_TYPE = "ai"
 PLAYER_1_ARCH = "sac"
-MODEL_1_PATH = "models/favourite/SAC/model_v21.pt"
+MODEL_1_PATH = "models/favourite/SAC/model_v23.pt"
 
 PLAYER_2_TYPE = "ai"
-PLAYER_2_ARCH = "ppo"
-MODEL_2_PATH = "models/favourite/PPO/model_v44.pt"
+PLAYER_2_ARCH = "sac"
+MODEL_2_PATH = "models/history/SAC/model_v25.pt"
 
 MAX_STEPS = 1000
 
@@ -33,6 +33,7 @@ plt.ion()
 fig, ax = plt.subplots(figsize=(8, 4))
 (line1,) = ax.plot([], [], "g-", label="Robot 1 (Green)", linewidth=1.5)
 (line2,) = ax.plot([], [], "b-", label="Robot 2 (Blue)", linewidth=1.5)
+ax.set_title("Cumulative Reward")
 ax.set_xlabel("Step")
 ax.set_ylabel("Total Reward")
 ax.legend()

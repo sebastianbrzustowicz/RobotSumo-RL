@@ -7,6 +7,67 @@ This project implements an autonomous Mini-Sumo combat agent trained using Reinf
   <img src="resources/Fight_2.gif" height="300px"/>
 </p>
 
+## Performance Analysis & Benchmarks
+
+The tournament results clearly demonstrate the evolution of combat strategies and the efficiency of different Reinforcement Learning architectures. The comparison shows a clear hierarchy in both peak performance and the speed of convergence.
+
+### Tournament Leaderboard & Efficiency
+
+| Rank | Agent | Model Versions | ELO Rating | Episodes Required |
+|:----:|:-----:|:--------------:|:----------:|:-----------------:|
+| 1-5  | **SAC** | v19 - v23 | **1391 - 1614** | **~378** |
+| 6-10 | **PPO** | v41 - v45 | **1128 - 1342** | **~1,049** |
+| 11-15| **A2C** | v423 - v427| **791 - 949** | **10,000 - 24,604**|
+
+> **Note on Convergence Rate:** There is a massive disparity in sample efficiency across architectures. SAC reached its peak potential significantly earlier, requiring approximately **3x fewer episodes** than PPO and over **60x fewer** than A2C to converge to a proficient combat level.
+
+### Top Models Comparison
+*Comparison of the highest-performing versions (final iterations) for each architecture.*
+
+<table width="100%">
+  <tr>
+    <td align="center">
+      <img src="resources/peak_elo_comparison_algos.png" width="800px"><br>
+      <em>Peak ELO by algorithm</em>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="resources/peak_elo_ranking_models.png" width="800px"><br>
+      <em>Peak models</em>
+    </td>
+  </tr>
+</table>
+
+---
+
+### Evolutionary Progress
+*Analysis of model performance sampled at regular intervals across the entire learning process (5 stages per architecture).*
+
+<table width="100%">
+  <tr>
+    <td align="center">
+      <img src="resources/sampled_elo_comparison_algos.png" width="800px"><br>
+      <em>Average ELO of sampled models by algorithm</em>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="resources/sampled_elo_ranking_models.png" width="800px"><br>
+      <em>Sampled models</em>
+    </td>
+  </tr>
+</table>
+
+### Key Takeaways
+
+* **SAC (Soft Actor-Critic) Efficiency:** SAC is the undisputed winner in this environment. Its off-policy maximum entropy framework allowed it to reach the highest skill ceiling (1614 ELO) with the best sample efficiency. 
+    * *Behavioral Note:* SAC agents developed a sophisticated ability to recover their orientation when displaced and actively exploit even minor positioning mistakes made by the opponent.
+* **PPO Stability & Tactics:** PPO remains a reliable contender, offering stable training and competitive performance. While it plateaus at a lower ELO than SAC, it remains a robust choice for continuous control.
+    * *Behavioral Note:* Interestingly, PPO agents excelled in "clinch" situations, learning tactical maneuvers to unbalance the opponent during close-quarter contact to gain a positioning advantage.
+* **A2C Performance Gap:** The basic Advantage Actor-Critic algorithm struggled significantly with sample efficiency and stability. Even with extensive training, its performance remained below the starting ELO of the more advanced architectures, highlighting the limitations of simpler on-policy methods in this task.
+* **Architecture Evolution:** The project highlights that modern off-policy methods (SAC) are far better suited for **continuous, non-linear control tasks** than traditional on-policy methods. SAC's ability to maximize entropy while learning from off-policy data leads to more sophisticated, adaptive combat behaviors and a significantly higher performance ceiling.
+
 ## State Vector Specification
 The input state vector (`state_ai`) consists of 11 normalized values, providing the agent with a comprehensive view of the situation on the arena:
 
@@ -50,7 +111,6 @@ The simulation environment is built to reflect official Mini-Sumo competition st
 
 ## Future Potential Improvements
 
-* Implementation of the **SAC** algorithm.
 * Expanding the input state vector with estimated **opponent velocity** based on recent lidar sensor samples.
 * Implementing a **BSP block** in the robot to limit linear and angular velocity.
 * Create a script to analyze model decisions and create **statistics** (e.g., average steps, spin count, number of rear-end collisions).
