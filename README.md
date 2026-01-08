@@ -4,9 +4,24 @@ This project implements an autonomous RobotSumo combat agent trained using Reinf
 
 Key features include a sophisticated **reward shaping engine** designed to promote aggressive forward movement, precise aiming, and strategic ring positioning while penalizing passive behaviors like spinning or backward driving.
 
+### *Real-time combat demonstration with live reward tracking.*
+
 <p align="center">
-  <img src="resources/Fight_1.gif" height="300px"/>
-  <img src="resources/Fight_2.gif" height="300px"/>
+  <video src="resources/SAC_A2C.mp4" width="auto" controls autoplay loop muted></video>
+  <br>
+  <em>SAC agent (Green) vs A2C agent (Blue)</em>
+</p>
+
+<p align="center">
+  <video src="resources/SAC_PPO.mp4" width="auto" controls autoplay loop muted></video>
+  <br>
+  <em>SAC agent (Green) vs PPO agent (Blue)</em>
+</p>
+
+<p align="center">
+  <video src="resources/PPO_A2C.mp4" width="auto" controls autoplay loop muted></video>
+  <br>
+  <em>A2C agent (Green) vs PPO agent (Blue)</em>
 </p>
 
 ## Performance Analysis & Benchmarks
@@ -21,6 +36,7 @@ The tournament results clearly demonstrate the evolution of combat strategies an
 | 6-10 | **PPO** | v41 - v45 | **1128 - 1342** | **~1,049** |
 | 11-15| **A2C** | v423 - v427| **791 - 949** | **10,000 - 24,604**|
 
+> [!NOTE]
 > **Note on Convergence Rate:** There is a massive disparity in sample efficiency across architectures. SAC reached its peak potential significantly earlier, requiring approximately **3x fewer episodes** than PPO and over **60x fewer** than A2C to converge to a proficient combat level.
 
 ### Top Models Comparison
