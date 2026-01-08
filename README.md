@@ -21,6 +21,19 @@ https://github.com/user-attachments/assets/bdabd7a4-4890-47b2-a4cf-d7549b31da2e
   <em>A2C agent (Green) vs PPO agent (Blue)</em>
 </p>
 
+## Getting Started
+
+To run the simulation and see the agents in action, follow these steps:
+
+### Installation
+```bash
+make install
+```
+### Quick Demo (Cross-Play, e.g. SAC vs PPO)
+```bash
+make cross-play
+```
+
 ## Performance Analysis & Benchmarks
 
 The tournament results clearly demonstrate the evolution of combat strategies and the efficiency of different Reinforcement Learning architectures. The comparison shows a clear hierarchy in both peak performance and the speed of convergence.
