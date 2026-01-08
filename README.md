@@ -6,21 +6,18 @@ Key features include a sophisticated **reward shaping engine** designed to promo
 
 ### *Real-time combat demonstration with live reward tracking.*
 
+https://github.com/user-attachments/assets/ca0baaf4-f6bf-412e-9ca7-3786b3346c5d
 <p align="center">
-  <video src="resources/SAC_A2C.mp4" width="auto" controls autoplay loop muted></video>
-  <br>
   <em>SAC agent (Green) vs A2C agent (Blue)</em>
 </p>
 
+https://github.com/user-attachments/assets/2b496931-9eda-4c8b-88ca-7286d5fa9b42
 <p align="center">
-  <video src="resources/SAC_PPO.mp4" width="auto" controls autoplay loop muted></video>
-  <br>
   <em>SAC agent (Green) vs PPO agent (Blue)</em>
 </p>
 
+https://github.com/user-attachments/assets/bdabd7a4-4890-47b2-a4cf-d7549b31da2e
 <p align="center">
-  <video src="resources/PPO_A2C.mp4" width="auto" controls autoplay loop muted></video>
-  <br>
   <em>A2C agent (Green) vs PPO agent (Blue)</em>
 </p>
 
