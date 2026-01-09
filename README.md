@@ -21,7 +21,7 @@ https://github.com/user-attachments/assets/bdabd7a4-4890-47b2-a4cf-d7549b31da2e
   <em>A2C agent (Green) vs PPO agent (Blue)</em>
 </p>
 
-## Getting Started
+## Simple Start
 
 To run the simulation and see the agents in action, follow these steps:
 
@@ -33,6 +33,19 @@ make install
 ```bash
 make cross-play
 ```
+
+### Other commands
+```bash
+make train-sac        # Starts fresh SAC training (clears old models)
+make train-ppo        # Starts fresh PPO training (clears old models)
+make train-a2c        # Starts fresh A2C training (clears old models)
+make test-sac         # Runs dedicated SAC test script
+make test-ppo         # Runs dedicated PPO test script
+make test-a2c         # Runs dedicated A2C test script
+make tournament       # Auto-picks top 5 trained models & runs ELO ranking 
+make clean-models     # Removes all training history and master models
+```
+*For a full list of available automation targets, please refer to the [Makefile](./Makefile).*
 
 ## Performance Analysis & Benchmarks
 
