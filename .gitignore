@@ -1,7 +1,8 @@
 **/__pycache__/
 *.py[cod]
 
-models/
+models/*
+!models/favourite/
 configs/
 mlruns/
 mini_sumo_rl.egg-info/

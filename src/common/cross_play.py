@@ -19,12 +19,12 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # Arch:  "a2c" / "ppo" / "sac"
 
 PLAYER_1_TYPE = "ai"
-PLAYER_1_ARCH = "a2c"
-MODEL_1_PATH = "models/favourite/A2C/model_v427.pt"
+PLAYER_1_ARCH = "sac"
+MODEL_1_PATH = "models/favourite/SAC/model_v23.pt"
 
 PLAYER_2_TYPE = "ai"
-PLAYER_2_ARCH = "ppo"
-MODEL_2_PATH = "models/favourite/PPO/model_v45.pt"
+PLAYER_2_ARCH = "a2c"
+MODEL_2_PATH = "models/favourite/A2C/model_v427.pt"
 
 MAX_STEPS = 1000
 
