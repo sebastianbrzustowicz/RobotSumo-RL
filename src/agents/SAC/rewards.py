@@ -1,4 +1,4 @@
-def get_reward(env, info, done, state_ai, is_collision):
+def get_reward(env, info, done, state_vec, is_collision):
     if done:
         winner = info.get("winner")
         if winner == 1:
@@ -8,13 +8,13 @@ def get_reward(env, info, done, state_ai, is_collision):
         return -20.0  # Penalty for a draw (timeout/passive play)
 
     r = 0.0
-    v_fwd = state_ai[0]
-    v_side = state_ai[1]
-    omega = abs(state_ai[2])
-    dist_opp = state_ai[5]
-    cos_to_opp = state_ai[7]
-    dist_edge_norm = state_ai[8]
-    cos_to_center = state_ai[10]
+    v_fwd = state_vec[0]
+    v_side = state_vec[1]
+    omega = abs(state_vec[2])
+    dist_opp = state_vec[5]
+    cos_to_opp = state_vec[7]
+    dist_edge_norm = state_vec[8]
+    cos_to_center = state_vec[10]
 
     # Reward forward velocity to encourage movement
     if v_fwd > 0.2:

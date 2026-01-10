@@ -68,7 +68,7 @@ def train():
         opp_net.load_state_dict(torch.load(path, map_location=DEVICE))
         opp_name = "MASTER" if is_fighting_master else os.path.basename(path)
 
-        obs = env.reset(randPositions=True)
+        state_vecs = env.reset(randPositions=True)
         ep_data = {"lps": [], "vals": [], "rews": [], "ents": [], "reward_sum": 0.0}
 
         for step in range(cfg["max_steps"]):
@@ -78,15 +78,15 @@ def train():
                     if event.type == pygame.QUIT:
                         return
 
-            act_ai, lp, ent, val = select_action(agent.model, obs[0], DEVICE)
+            act_ai, lp, ent, val = select_action(agent.model, state_vecs[0], DEVICE)
             with torch.no_grad():
-                act_opp, _, _, _ = select_action(opp_net, obs[1], DEVICE)
+                act_opp, _, _, _ = select_action(opp_net, state_vecs[1], DEVICE)
 
-            next_obs, _, env_done, info = env.step(act_ai.flatten(), act_opp.flatten())
+            next_state_vecs, _, env_done, info = env.step(act_ai.flatten(), act_opp.flatten())
 
             done = env_done or (step == cfg["max_steps"] - 1)
             reward = get_reward(
-                None, info, done, next_obs[0], info.get("is_collision", False)
+                None, info, done, next_state_vecs[0], info.get("is_collision", False)
             )
 
             ep_data["lps"].append(lp)
@@ -95,7 +95,7 @@ def train():
             ep_data["rews"].append(reward)
             ep_data["reward_sum"] += reward
 
-            obs = next_obs
+            state_vecs = next_state_vecs
 
             if done:
                 winner = info.get("winner", 0)

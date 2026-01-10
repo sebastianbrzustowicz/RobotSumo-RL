@@ -77,7 +77,7 @@ def train():
             else:
                 opp_net.load_state_dict(sd)
 
-            obs = env.reset(randPositions=True)
+            state_vecs = env.reset(randPositions=True)
             done, ep_rew, ep_steps = False, 0, 0
 
             while not done:
@@ -87,17 +87,17 @@ def train():
                 if total_steps < cfg["start_steps"]:
                     act_np = np.random.uniform(-1, 1, 2)
                 else:
-                    s_t = torch.FloatTensor(obs[0]).to(device).unsqueeze(0)
+                    s_t = torch.FloatTensor(state_vecs[0]).to(device).unsqueeze(0)
                     with torch.no_grad():
                         action, _, _ = agent.actor.sample(s_t)
                     act_np = action.cpu().numpy()[0]
 
-                opp_s_t = torch.FloatTensor(obs[1]).to(device).unsqueeze(0)
+                opp_s_t = torch.FloatTensor(state_vecs[1]).to(device).unsqueeze(0)
                 with torch.no_grad():
                     _, _, opp_mu = opp_net.sample(opp_s_t)
                 opp_act_np = opp_mu.cpu().numpy()[0]
 
-                next_obs, _, env_done, info = env.step(act_np, opp_act_np)
+                next_state_vecs, _, env_done, info = env.step(act_np, opp_act_np)
 
                 ep_steps += 1
                 done = env_done or ep_steps >= cfg["max_steps"]
@@ -105,10 +105,10 @@ def train():
                     info["winner"] = 0
 
                 rew = get_reward(
-                    None, info, done, next_obs[0], info.get("is_collision", False)
+                    None, info, done, next_state_vecs[0], info.get("is_collision", False)
                 )
 
-                memory.push(obs[0], act_np, rew, next_obs[0], float(done))
+                memory.push(state_vecs[0], act_np, rew, next_state_vecs[0], float(done))
 
                 # --- AGENT PARAMETERS UPDATE ---
                 if (
@@ -119,7 +119,7 @@ def train():
                         memory, cfg["batch_size"], cfg["gamma"], cfg["tau"]
                     )
 
-                obs = next_obs
+                state_vecs = next_state_vecs
                 ep_rew += rew
                 total_steps += 1
 

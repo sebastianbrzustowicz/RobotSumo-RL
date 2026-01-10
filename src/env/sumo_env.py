@@ -60,7 +60,7 @@ class SumoEnv:
         self.last_action1 = np.zeros(2)
         self.last_action2 = np.zeros(2)
 
-        return self._get_all_obs()
+        return self._get_all_state_vecs()
 
     def step(self, action1, action2):
         self.last_action1 = action1
@@ -75,12 +75,12 @@ class SumoEnv:
         if is_collision:
             self.has_collision_occurred = True
 
-        obs, rewards, done, info = self._calculate_env_logic()
+        state_vecs, rewards, done, info = self._calculate_env_logic()
 
         info["is_collision"] = is_collision
         info["has_collision"] = self.has_collision_occurred
 
-        return obs, rewards, done, info
+        return state_vecs, rewards, done, info
 
     def _handle_collisions(self):
         overlap_info = check_sat_collision(
@@ -145,7 +145,7 @@ class SumoEnv:
             "angle": r2_angle,
         }
 
-    def _get_obs(self, viewer, target):
+    def _get_state_vec(self, viewer, target):
         v_fwd = viewer.v
         v_side = viewer.v_side
         omega = viewer.omega
@@ -181,10 +181,10 @@ class SumoEnv:
             dtype=np.float32,
         )
 
-    def _get_all_obs(self):
+    def _get_all_state_vecs(self):
         return [
-            self._get_obs(self.robot1, self.robot2),
-            self._get_obs(self.robot2, self.robot1),
+            self._get_state_vec(self.robot1, self.robot2),
+            self._get_state_vec(self.robot2, self.robot1),
         ]
 
     def _calculate_env_logic(self):
@@ -199,19 +199,19 @@ class SumoEnv:
                     break
             if self.done:
                 break
-        return self._get_all_obs(), [0.0, 0.0], self.done, {"winner": winner}
+        return self._get_all_state_vecs(), [0.0, 0.0], self.done, {"winner": winner}
 
     def render(self, names=None, archs=None):
         if not self.render_mode or self.renderer is None:
             return
         self.clock.tick(FPS)
         self.renderer.draw_arena(self.ARENA_RADIUS)
-        obs = self._get_all_obs()
+        state_vecs = self._get_all_state_vecs()
         if self.render_vectors:
-            self.renderer.draw_observations_visual(self.robots, obs)
+            self.renderer.draw_observations_visual(self.robots, state_vecs)
         self.renderer.draw_robot(self.robot1, ROBOT_COLOR_1, 0)
         self.renderer.draw_robot(self.robot2, ROBOT_COLOR_2, 1)
-        self.renderer.draw_ui(self.robots, observations=obs, names=names, archs=archs)
+        self.renderer.draw_ui(self.robots, observations=state_vecs, names=names, archs=archs)
         actions = [self.last_action1, self.last_action2]
         self.renderer.draw_actions(actions)
 

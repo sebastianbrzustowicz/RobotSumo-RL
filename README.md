@@ -109,8 +109,33 @@ The tournament results clearly demonstrate the evolution of combat strategies an
 * **A2C Performance Gap:** The basic Advantage Actor-Critic algorithm struggled significantly with sample efficiency and stability. Even with extensive training, its performance remained below the starting ELO of the more advanced architectures, highlighting the limitations of simpler on-policy methods in this task.
 * **Architecture Evolution:** The project highlights that modern off-policy methods (SAC) are far better suited for **continuous, non-linear control tasks** than traditional on-policy methods. SAC's ability to maximize entropy while learning from off-policy data leads to more sophisticated, adaptive combat behaviors and a significantly higher performance ceiling.
 
+## System Architecture
+
+The following block diagram illustrates the closed-loop control system. It distinguishes between the **Mobile Robot** (physical/sensing layer) and the **SAC Controller** (decision layer). Note that the goal signal $\mathbf{r}_t$ is only utilized during the training phase to shape the policy via the reward engine.
+
+<p align="center">
+  <img src="resources/control_loop.svg" width="1000px" style="background-color:white;">
+</p>
+
+### Functional Blocks
+
+* **Controller (RL Policy):** A neural network-based agent (e.g., SAC, PPO, or A2C) that maps the current observation vector to a continuous action space. It operates as the inference engine during the deployment phase.
+* **Dynamics:** Represents the second-order physical model of the robot. It calculates the response to input forces and torques, accounting for mass, moment of inertia, and friction, influenced by external **Disturbances** (SAT Collisions).
+* **Kinematics:** A state integration block that transforms generalized velocities into global coordinates. It maintains the robot's pose relative to the arena's origin.
+* **Perception (Sensor Fusion):** A preprocessing layer that transforms raw global state data and environment information (e.g., opponent position) into a normalized, egocentric observation vector.
+
+### Signal Vectors
+
+The communication between blocks is defined by the following mathematical vectors:
+
+* $\mathbf{r}_t$: **Reward/Goal signal** – utilized exclusively during training to guide the policy optimization via the reward shaping function.
+* $\mathbf{a}_t = [v_{target}, \omega_{target}]^T$: **Action vector** – control commands representing desired linear and angular velocities.
+* $\dot{\mathbf{x}}_t = [\dot{x}, \dot{y}, \dot{\theta}]^T$: **State derivative** – the instantaneous generalized velocities calculated by the dynamics engine.
+* $\mathbf{y}_t = [x, y, \theta]^T$: **Physical output (Pose)** – the current coordinates and orientation of the robot in the global frame.
+* $\mathbf{s}_t$: **Observation vector (`state_vec`)** – an 11-dimensional normalized feature vector containing proprioceptive cues (velocity) and exteroceptive spatial relations (distance to opponent/edges).
+
 ## State Vector Specification
-The input state vector (`state_ai`) consists of 11 normalized values, providing the agent with a comprehensive view of the situation on the arena:
+The input state vector (`state_vec`) consists of 11 normalized values, providing the agent with a comprehensive view of the situation on the arena:
 
 | Index | Parameter | Description | Range | Source / Sensor |
 | :--- | :--- | :--- | :--- | :--- |
@@ -134,7 +159,7 @@ The reward system is designed to enforce aggressive combat and strategic surviva
 * **Backward Block:** Reverse driving is strictly penalized and cancels other rewards for that step.
 * **Anti-Spinning:** Penalties for excessive rotation to prevent aimless spinning.
 * **Forward Progress:** Rewards for moving forward are scaled by targeting accuracy (facing the opponent).
-* **"Nitro" Charge:** Exponential speed bonuses granted only when charging directly at the opponent.
+* **"Kinetic Engagement:** High-magnitude bonuses for maintaining forward velocity while directly facing the opponent, encouraging decisive attacks.
 * **Edge Safety:** Proactive logic that penalizes movement toward the abyss and rewards returning to the arena center.
 * **Combat Dynamics:** Rewards for high-velocity head-on collisions (pushing) and penalties for being hit from the side or rear.
 * **Efficiency:** A constant time penalty per step to encourage the fastest possible victory.
@@ -143,15 +168,16 @@ The reward system is designed to enforce aggressive combat and strategic surviva
 The simulation environment is built to reflect official RobotSumo competition standards with high physical fidelity:
 
 * **Arena:** 
-    * **(Dohyo):** Modeled with a standard radius and a defined center point. The environment strictly enforces boundary conditions; a match ends (Terminal State) as soon as any corner of a robot's chassis exceeds the `ARENA_RADIUS`.     
+    * **(Dohyo):** Modeled with a standard radius (77 cm) and a defined center point. The environment strictly enforces boundary conditions; a match ends (Terminal State) as soon as any corner of a robot's chassis exceeds the `ARENA_DIAMETER_M`.     
 * **Robot Physics:** 
-    * **Chassis:** Robots adhere to the 10x10 cm square dimensions (`ROBOT_SIZE_PX`).
+    * **Chassis:** Robots adhere to the 10x10 cm square dimensions (`ROBOT_SIDE`).
     * **Dynamics:** The system implements mass-based acceleration, rotational inertia, and friction models (including lateral friction to simulate tire grip).
 * **Collision System:** Real-time contact handling is powered by the **Separating Axis Theorem (SAT)**. It calculates non-elastic overlaps and applies physical impulses, affecting both forward and lateral velocities based on the robots' mass and restitution.
 * **Start Conditions:** Features a standard starting distance (~70% of arena radius) with support for both fixed positions and randomized 360-degree orientations to enhance training robustness.
 
 ## Future Potential Improvements
 
+* Observation Noise Injection: Implementing Gaussian noise models for lidar and odometry sensors to simulate real-world sensor stochasticity, facilitating better policy generalization and robustness.
 * Expanding the input state vector with estimated opponent velocity based on recent lidar sensor samples.
 * Implementing non-linear dynamics such as wheel slippage, linear-angular velocity saturation and motor saturation to better simulate real-world conditions.
 * Create a script to analyze model decisions and create **statistics** (e.g., average steps, spin count, number of rear-end collisions).

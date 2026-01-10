@@ -81,7 +81,7 @@ def train():
 
             opp_net.load_state_dict(torch.load(opp_path, map_location=device))
 
-            obs = env.reset(randPositions=True)
+            state_vecs = env.reset(randPositions=True)
             done, ep_rew, ep_steps = False, 0, 0
             ep_data = {"s": [], "a": [], "lp": [], "v": [], "r": [], "m": []}
 
@@ -93,10 +93,10 @@ def train():
                             return
 
                 s_t = torch.as_tensor(
-                    obs[0], dtype=torch.float32, device=device
+                    state_vecs[0], dtype=torch.float32, device=device
                 ).unsqueeze(0)
                 opp_s_t = torch.as_tensor(
-                    obs[1], dtype=torch.float32, device=device
+                    state_vecs[1], dtype=torch.float32, device=device
                 ).unsqueeze(0)
 
                 with torch.no_grad():
@@ -109,7 +109,7 @@ def train():
                 act_np = torch.clamp(act, -1, 1).cpu().numpy()[0]
                 o_act_np = torch.clamp(o_act, -1, 1).cpu().numpy()[0]
 
-                next_obs, _, env_done, info = env.step(act_np, o_act_np)
+                next_state_vecs, _, env_done, info = env.step(act_np, o_act_np)
 
                 ep_steps += 1
                 if ep_steps >= cfg.get("max_steps", 1000):
@@ -119,7 +119,7 @@ def train():
                     done = env_done
 
                 rew = get_reward(
-                    None, info, done, next_obs[0], info.get("is_collision", False)
+                    None, info, done, next_state_vecs[0], info.get("is_collision", False)
                 )
 
                 # Save the data
@@ -130,13 +130,13 @@ def train():
                 ep_data["r"].append(rew)
                 ep_data["m"].append(1.0 - float(done))
 
-                obs, ep_rew, buffer_steps = next_obs, ep_rew + rew, buffer_steps + 1
+                state_vecs, ep_rew, buffer_steps = next_state_vecs, ep_rew + rew, buffer_steps + 1
 
             # Calculate returns for PPO
             with torch.no_grad():
                 _, last_v = model(
                     torch.as_tensor(
-                        obs[0], dtype=torch.float32, device=device
+                        state_vecs[0], dtype=torch.float32, device=device
                     ).unsqueeze(0)
                 )
 

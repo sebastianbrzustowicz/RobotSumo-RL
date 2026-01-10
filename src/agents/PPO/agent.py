@@ -91,9 +91,9 @@ def collect_trajectories(env, agent, discount_factor, device):
 
         log_prob = dist.log_prob(action).sum(dim=-1)
 
-        next_obs, reward, done, info = env.step(action_clipped.cpu().numpy()[0])
-        if isinstance(next_obs, tuple):
-            next_obs = next_obs[0]
+        next_state_vecs, reward, done, info = env.step(action_clipped.cpu().numpy()[0])
+        if isinstance(next_state_vecs, tuple):
+            next_state_vecs = next_state_vecs[0]
 
         actions.append(action)
         log_probs.append(log_prob)
@@ -101,7 +101,7 @@ def collect_trajectories(env, agent, discount_factor, device):
         rewards.append(reward)
         masks.append(1.0 - float(done))
 
-        state = next_obs
+        state = next_state_vecs
         episode_reward += reward
 
     # Prepare data for training

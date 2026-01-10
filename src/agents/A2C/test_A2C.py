@@ -110,9 +110,9 @@ def main():
             act1 = get_action(PLAYER_1_TYPE, 0, state, model1)
             act2 = get_action(PLAYER_2_TYPE, 1, state, model2)
 
-            state, _, env_done, info = env.step(act1, act2)
+            state_vecs, _, env_done, info = env.step(act1, act2)
             if isinstance(state, tuple):
-                state = state[0]
+                state_vec = state_vecs[0]
 
             done = env_done or (step_count + 1 >= MAX_STEPS)
 
@@ -130,10 +130,10 @@ def main():
 
             # Calc rewards for plot
             r1_s = get_reward(
-                None, info, done, state[0], info.get("is_collision", False)
+                None, info, done, state_vec[0], info.get("is_collision", False)
             )
             r2_s = get_reward(
-                None, info_for_robot2, done, state[1], info.get("is_collision", False)
+                None, info_for_robot2, done, state_vec[1], info.get("is_collision", False)
             )
 
             total_r1 += r1_s
