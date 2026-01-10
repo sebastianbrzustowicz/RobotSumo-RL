@@ -152,8 +152,8 @@ The simulation environment is built to reflect official RobotSumo competition st
 
 ## Future Potential Improvements
 
-* Expanding the input state vector with estimated **opponent velocity** based on recent lidar sensor samples.
-* Implementing a **BSP block** in the robot to limit linear and angular velocity.
+* Expanding the input state vector with estimated opponent velocity based on recent lidar sensor samples.
+* Implementing non-linear dynamics such as wheel slippage, linear-angular velocity saturation and motor saturation to better simulate real-world conditions.
 * Create a script to analyze model decisions and create **statistics** (e.g., average steps, spin count, number of rear-end collisions).
 
 ## License
