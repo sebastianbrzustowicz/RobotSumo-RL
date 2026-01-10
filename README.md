@@ -24,7 +24,7 @@ https://github.com/user-attachments/assets/bdabd7a4-4890-47b2-a4cf-d7549b31da2e
 
 ## System Architecture
 
-The following block diagram illustrates the closed-loop control system. It distinguishes between the **Mobile Robot** (physical/sensing layer) and the **SAC Controller** (decision layer). Note that the goal signal $\mathbf{r}_t$ is only utilized during the training phase to shape the policy via the reward engine.
+The following block diagram illustrates the closed-loop control system. It distinguishes between the **Mobile Robot** (physical/sensing layer) and the **RL Controller** (decision layer). Note that the goal signal $\mathbf{r}_t$ is only utilized during the training phase to shape the policy via the reward engine.
 
 <div align="center">
   <img src="resources/control_loop.png" width="650px">
@@ -188,7 +188,8 @@ make clean-models     # Removes all training history and master models
 
 ## License
 
-RobotSumo-RL is released under the MIT license.
+RobotSumo-RL Source-Available License (No AI Use).  
+See the [LICENSE](./LICENSE) file for full terms and restrictions.
 
 ## Author
 

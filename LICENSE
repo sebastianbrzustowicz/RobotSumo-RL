@@ -1,16 +1,90 @@
-MIT License
+RobotSumo-RL Source-Available License (No AI Use)
 
-Copyright (c) 2024 Sebastian Brzustowicz
+Copyright (c) 2026 Sebastian Brzustowicz
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+of this software and associated documentation files (the "Software"), to use,
+copy, modify, merge, publish, and distribute copies of the Software for
+personal, educational, and research purposes only, subject to the limitations
+set forth below.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This license explicitly excludes any right to use the Software for automated
+processing or artificial intelligence related purposes.
+
+
+1. Definitions
+
+"Artificial Intelligence System" means any system, model, or algorithm that
+performs tasks typically associated with human intelligence, including but not
+limited to machine learning models, neural networks, large language models
+(LLMs), embedding models, retrieval systems, autonomous agents, and statistical
+learning systems.
+
+"Training" means any process of training, fine-tuning, distillation,
+evaluation, benchmarking, or improvement of an Artificial Intelligence System,
+whether supervised, unsupervised, self-supervised, reinforcement-based, or
+hybrid.
+
+"Automated Use" means access, processing, analysis, or execution of the
+Software by automated tools, scripts, agents, crawlers, bots, or Artificial
+Intelligence Systems without direct and continuous human control.
+
+"Training Data" means any data, code, documentation, model weights,
+configuration files, outputs, or metadata used as input to Training or to
+generate embeddings, vector representations, indexes, or retrieval databases.
+
+"Retrieval-Augmented Generation (RAG)" means any system or workflow that
+indexes, embeds, stores, retrieves, or reasons over any portion of the
+Software using an Artificial Intelligence System.
+
+
+2. Permitted Use
+
+The Software may be used, copied, modified, and distributed by human users for
+non-automated purposes, including:
+
+- learning, teaching, and educational use;
+- academic, private, or industrial research conducted by humans;
+- manual execution, experimentation, and debugging;
+- training and evaluation of reinforcement learning agents defined within the
+  Software itself, provided that the Software is not used as Training Data for
+  any Artificial Intelligence System.
+
+
+3. Prohibited Use
+
+The Software may NOT be used, directly or indirectly, in whole or in part, for
+any of the following purposes:
+
+- Training, fine-tuning, distillation, evaluation, or benchmarking of any
+  Artificial Intelligence System;
+- Use of the Software as Training Data for any Artificial Intelligence System;
+- Generation of embeddings, vector representations, semantic indexes, or
+  vector databases;
+- Use in Retrieval-Augmented Generation (RAG) systems or similar retrieval or
+  reasoning pipelines;
+- Automated scraping, crawling, indexing, or dataset generation;
+- Use by autonomous agents, AI assistants, or automated decision-making
+  systems;
+- Any use that enables an Artificial Intelligence System to learn from,
+  reproduce, approximate, or reason over the Software or its functionality.
+
+
+4. Models and Weights
+
+Any pre-trained models, weights, parameters, or learned representations
+included in the Software are subject to the same restrictions and may not be
+used as Training Data, teacher models, reference models, or for distillation,
+transfer learning, or derivative model creation.
+
+
+5. No Sublicensing for Prohibited Use
+
+You may not sublicense, distribute, or provide access to the Software in any
+form that enables Prohibited Use by third parties.
+
+
+6. Disclaimer of Warranty
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
