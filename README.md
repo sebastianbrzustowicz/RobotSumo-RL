@@ -198,7 +198,7 @@ If this repository has helped you during your research, feel free to cite it:
 @software{brzustowicz_robotsumo_rl_2026,
   author = {Sebastian Brzustowicz},
   title = {RobotSumo-RL: Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms},
-  url = {[https://github.com/sebastianbrzustowicz/RobotSumo-RL](https://github.com/sebastianbrzustowicz/RobotSumo-RL)},
+  url = {https://github.com/sebastianbrzustowicz/RobotSumo-RL},
   version = {1.0.0},
   year = {2026}
 }
