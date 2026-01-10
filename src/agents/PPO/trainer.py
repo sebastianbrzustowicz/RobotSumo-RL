@@ -119,7 +119,11 @@ def train():
                     done = env_done
 
                 rew = get_reward(
-                    None, info, done, next_state_vecs[0], info.get("is_collision", False)
+                    None,
+                    info,
+                    done,
+                    next_state_vecs[0],
+                    info.get("is_collision", False),
                 )
 
                 # Save the data
@@ -130,7 +134,11 @@ def train():
                 ep_data["r"].append(rew)
                 ep_data["m"].append(1.0 - float(done))
 
-                state_vecs, ep_rew, buffer_steps = next_state_vecs, ep_rew + rew, buffer_steps + 1
+                state_vecs, ep_rew, buffer_steps = (
+                    next_state_vecs,
+                    ep_rew + rew,
+                    buffer_steps + 1,
+                )
 
             # Calculate returns for PPO
             with torch.no_grad():

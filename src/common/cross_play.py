@@ -29,13 +29,13 @@ MODEL_2_PATH = "models/favourite/A2C/model_v427.pt"
 MAX_STEPS = 1000
 
 # --- PLOT INITIALIZATION ---
-plt.rcParams['toolbar'] = 'None'
+plt.rcParams["toolbar"] = "None"
 plt.ion()
 fig, ax = plt.subplots(figsize=(8, 7))
-#fig.subplots_adjust(bottom=0.20, left=0.1, right=0.95, top=0.85)
+# fig.subplots_adjust(bottom=0.20, left=0.1, right=0.95, top=0.85)
 (line1,) = ax.plot([], [], "g-", label="Robot 1 (Green)", linewidth=1.5)
 (line2,) = ax.plot([], [], "b-", label="Robot 2 (Blue)", linewidth=1.5)
-fig.canvas.manager.set_window_title('Live Reward Analytics')
+fig.canvas.manager.set_window_title("Live Reward Analytics")
 ax.set_title("Cumulative Reward")
 ax.set_xlabel("Step")
 ax.set_ylabel("Total Reward")

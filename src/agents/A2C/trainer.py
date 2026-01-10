@@ -82,7 +82,9 @@ def train():
             with torch.no_grad():
                 act_opp, _, _, _ = select_action(opp_net, state_vecs[1], DEVICE)
 
-            next_state_vecs, _, env_done, info = env.step(act_ai.flatten(), act_opp.flatten())
+            next_state_vecs, _, env_done, info = env.step(
+                act_ai.flatten(), act_opp.flatten()
+            )
 
             done = env_done or (step == cfg["max_steps"] - 1)
             reward = get_reward(

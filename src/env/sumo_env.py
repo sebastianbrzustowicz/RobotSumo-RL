@@ -211,7 +211,9 @@ class SumoEnv:
             self.renderer.draw_observations_visual(self.robots, state_vecs)
         self.renderer.draw_robot(self.robot1, ROBOT_COLOR_1, 0)
         self.renderer.draw_robot(self.robot2, ROBOT_COLOR_2, 1)
-        self.renderer.draw_ui(self.robots, observations=state_vecs, names=names, archs=archs)
+        self.renderer.draw_ui(
+            self.robots, observations=state_vecs, names=names, archs=archs
+        )
         actions = [self.last_action1, self.last_action2]
         self.renderer.draw_actions(actions)
 

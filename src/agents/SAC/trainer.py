@@ -105,7 +105,11 @@ def train():
                     info["winner"] = 0
 
                 rew = get_reward(
-                    None, info, done, next_state_vecs[0], info.get("is_collision", False)
+                    None,
+                    info,
+                    done,
+                    next_state_vecs[0],
+                    info.get("is_collision", False),
                 )
 
                 memory.push(state_vecs[0], act_np, rew, next_state_vecs[0], float(done))

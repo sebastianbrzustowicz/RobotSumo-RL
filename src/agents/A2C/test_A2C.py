@@ -25,7 +25,7 @@ plt.ion()
 fig, ax = plt.subplots(figsize=(8, 4))
 (line1,) = ax.plot([], [], "g-", label="Robot 1 (Green)", linewidth=1.5)
 (line2,) = ax.plot([], [], "b-", label="Robot 2 (Blue)", linewidth=1.5)
-fig.canvas.manager.set_window_title('Live Reward Analytics')
+fig.canvas.manager.set_window_title("Live Reward Analytics")
 ax.set_title("Cumulative Reward")
 ax.set_xlabel("Step")
 ax.set_ylabel("Total Reward")
@@ -133,7 +133,11 @@ def main():
                 None, info, done, state_vec[0], info.get("is_collision", False)
             )
             r2_s = get_reward(
-                None, info_for_robot2, done, state_vec[1], info.get("is_collision", False)
+                None,
+                info_for_robot2,
+                done,
+                state_vec[1],
+                info.get("is_collision", False),
             )
 
             total_r1 += r1_s
