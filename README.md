@@ -186,6 +186,24 @@ make clean-models     # Removes all training history and master models
 * Implementing non-linear dynamics such as wheel slippage, linear-angular velocity saturation and motor saturation to better simulate real-world conditions.
 * Create a script to analyze model decisions and create **statistics** (e.g., average steps, spin count, number of rear-end collisions).
 
+## Citation
+
+If this repository has helped you during your research, feel free to cite it:
+
+**APA Style**
+> Brzustowicz, S. (2026). RobotSumo-RL: Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms (Version 1.0.0) [Source code]. https://github.com/sebastianbrzustowicz/RobotSumo-RL
+
+**BibTeX**
+```bibtex
+@software{brzustowicz_robotsumo_rl_2026,
+  author = {Sebastian Brzustowicz},
+  title = {RobotSumo-RL: Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms},
+  url = {[https://github.com/sebastianbrzustowicz/RobotSumo-RL](https://github.com/sebastianbrzustowicz/RobotSumo-RL)},
+  version = {1.0.0},
+  year = {2026}
+}
+```
+
 ## License
 
 RobotSumo-RL Source-Available License (No AI Use).  

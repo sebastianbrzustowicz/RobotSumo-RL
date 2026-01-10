@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If this repository has helped you during your research, feel free to cite it as follows:"
+authors:
+- family-names: "Brzustowicz"
+  given-names: "Sebastian"
+  email: "Se.Brzustowicz@gmail.com"
+title: "RobotSumo-RL: Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms"
+version: 1.0.0
+date-released: 2026-01-11
+url: "https://github.com/sebastianbrzustowicz/RobotSumo-RL"
+repository-code: "https://github.com/sebastianbrzustowicz/RobotSumo-RL"
+keywords:
+  - machine-learning
+  - reinforcement-learning
+  - robotics
+  - pytorch
+  - artificial-intelligence
+  - rl
+  - physics-simulation
+  - mobile-robots
+  - sac
+  - actor-critic
+  - ppo
+  - a2c
+  - autonomous-robots
+  - self-play
+  - reward-shaping
+  - minisumo
+abstract: >-
+  An advanced training system for autonomous Robot Sumo agents featuring
+  a comparative study of SAC, PPO, and A2C architectures, competitive 
+  self-play mechanisms, and sophisticated reward shaping for continuous 
+  control in combat robotics.
