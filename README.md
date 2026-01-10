@@ -113,9 +113,9 @@ The tournament results clearly demonstrate the evolution of combat strategies an
 
 The following block diagram illustrates the closed-loop control system. It distinguishes between the **Mobile Robot** (physical/sensing layer) and the **SAC Controller** (decision layer). Note that the goal signal $\mathbf{r}_t$ is only utilized during the training phase to shape the policy via the reward engine.
 
-<p align="center">
-  <img src="resources/control_loop.svg" width="1000px" style="background-color:white;">
-</p>
+<div align="center" style="background: white; border-radius: 15px; overflow: hidden; padding: 10px;">
+  <img src="resources/control_loop.png" width="1000">
+</div>
 
 ### Functional Blocks
 
