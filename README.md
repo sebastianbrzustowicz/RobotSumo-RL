@@ -203,6 +203,8 @@ If this repository has helped you during your research, feel free to cite it:
   year = {2026}
 }
 ```
+> [!TIP]
+> You can also use the **"Cite this repository"** button in the sidebar to automatically copy these citations or download the raw metadata file.
 
 ## License
 
