@@ -181,10 +181,12 @@ make clean-models     # Removes all training history and master models
 
 ## Future Potential Improvements
 
-* Observation Noise Injection: Implementing Gaussian noise models for lidar and odometry sensors to simulate real-world sensor stochasticity, facilitating better policy generalization and robustness.
-* Expanding the input state vector with estimated opponent velocity based on recent lidar sensor samples.
-* Implementing non-linear dynamics such as wheel slippage, linear-angular velocity saturation and motor saturation to better simulate real-world conditions.
-* Create a script to analyze model decisions and create **statistics** (e.g., average steps, spin count, number of rear-end collisions).
+* **Observation Noise Injection**: Implementing Gaussian noise models for lidar and odometry sensors to simulate real-world sensor stochasticity, facilitating better policy generalization and robustness.
+* **Input State Expansion**: Expanding the input state vector with estimated opponent velocity based on recent lidar sensor samples to improve predictive combat maneuvers.
+* **Advanced Physics Modeling**: Implementing non-linear dynamics such as wheel slippage, linear-angular velocity saturation, and motor saturation to better simulate real-world physical constraints and improve Sim-to-Real potential.
+* **Automated Analytics & Statistics**: Creating a script to analyze model decisions and generate detailed metrics (e.g., average steps per round, spin frequency, and specific collision types like rear-end or lateral impacts).
+* **Ablation Studies**: Parameterizing the reward shaping function to conduct ablation studies, isolating how individual components (e.g., positioning vs. aggression) contribute to the stability and convergence of SAC and PPO.
+* **Evaluation Harnesses & Regression Testing**: Developing a suite of fixed tactical scenarios (e.g., edge-recovery challenges, specific starting orientations) to serve as a regression test suite, ensuring new model versions don't lose fundamental skills while optimizing for higher ELO.
 
 ## Citation
 
