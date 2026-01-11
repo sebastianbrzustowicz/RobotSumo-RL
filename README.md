@@ -42,7 +42,7 @@ The following block diagram illustrates the closed-loop control system. It disti
 The communication between blocks is defined by the following mathematical vectors:
 
 * $\mathbf{r}_t$: **Reward/Goal signal** – utilized exclusively during training to guide the policy optimization via the reward shaping function.
-* $\mathbf{a}_t = [v_{target}, \omega_{target}]^T$: **Action vector** – control commands representing desired linear and angular velocities.
+* $\mathbf{a}_t = [v\_{target}, \omega\_{target}]^T$: **Action vector** – control commands representing desired linear and angular velocities.
 * $\dot{\mathbf{x}}_t = [\dot{x}, \dot{y}, \dot{\theta}]^T$: **State derivative** – the instantaneous generalized velocities calculated by the dynamics engine.
 * $\mathbf{y}_t = [x, y, \theta]^T$: **Physical output (Pose)** – the current coordinates and orientation of the robot in the global frame.
 * $\mathbf{s}_t$: **Observation vector (`state_vec`)** – an 11-dimensional normalized feature vector containing proprioceptive cues (velocity) and exteroceptive spatial relations (distance to opponent/edges).
