@@ -35,7 +35,7 @@ The following block diagram illustrates the closed-loop control system. It disti
 * **Controller (RL Policy):** A neural network-based agent (e.g., SAC, PPO, or A2C) that maps the current observation vector to a continuous action space. It operates as the inference engine during the deployment phase.
 * **Dynamics:** Represents the second-order physical model of the robot. It calculates the response to input forces and torques, accounting for mass, moment of inertia, and friction, influenced by external **Disturbances** (SAT Collisions).
 * **Kinematics:** A state integration block that transforms generalized velocities into global coordinates. It maintains the robot's pose relative to the arena's origin.
-* **Perception (Sensor Fusion):** A preprocessing layer that transforms raw global state data and environment information (e.g., opponent position) into a normalized, egocentric observation vector.
+* **Sensor Fusion (Perception):** A preprocessing layer that transforms the robot state vector, raw global state data and environment information (e.g., opponent position) into a normalized, egocentric observation vector.
 
 ### Signal Vectors
 
