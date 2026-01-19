@@ -1,7 +1,7 @@
 <p align="center">
   <a href="../README.md">English</a> · 
   <strong>中文</strong> · 
-  <a href="README.pl.md">Polski</a> ·
+  <a href="README.pl.md">Polski</a>
 </p>
 
 
