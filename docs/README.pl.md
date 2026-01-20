@@ -1,10 +1,16 @@
 <p align="center">
-  <a href="../README.md">English</a> · 
-  <a href="README.zh-CN.md">中文</a> · 
-  <strong>Polski</strong>
+  <a href="../README.md">English</a> ·
+  <a href="README.zh-CN.md">中文</a> ·
+  <strong>Polski</strong> ·
+  <a href="README.es.md">Español</a> ·
+  <a href="README.ja.md">日本語</a> ·
+  <a href="README.ko.md">한국어</a> ·
+  <a href="README.ru.md">Русский</a> ·
+  <a href="README.fr.md">Français</a> ·
+  <a href="README.de.md">Deutsch</a>
 </p>
 
-# RobotSumo RL Training System
+# System treningowy RobotSumo RL
 
 Ten projekt implementuje autonomicznego agenta do walk RobotSumo, trenowanego przy użyciu uczenia przez wzmocnienie (architektura Actor-Critic). System korzysta ze specjalnego środowiska treningowego wyposażonego w **mechanizm self-play**, w którym uczący się agent rywalizuje z modelem "Master" lub z własnymi historycznymi wersjami, aby nieustannie rozwijać i udoskonalać swoje strategie walki.
 
