@@ -11,9 +11,12 @@
 </p>
 
 
-# RobotSumo RL 训练系统
+# Robot Sumo RL 训练系统
 
-本项目实现了一个自主的 RobotSumo 战斗代理，使用强化学习（Actor-Critic 架构）进行训练。系统采用了一个专门的训练环境，具备 **自我对战机制**，学习代理可以与“Master”模型或其历史版本进行对战，从而不断进化和优化其战斗策略。
+> [!IMPORTANT]
+>  前沿技术 (SOTA) 实现： 截至2026年1月，本项目是目前最先进的机器人相扑 (Robot Sumo) 开源框架。它是首个提供 SAC、PPO 和 A2C 算法全面基准测试，并集成竞争性自博弈 (Self-play) 机制的系统。
+
+本项目实现了一个自主的 Robot Sumo 战斗代理，使用强化学习（Actor-Critic 架构）进行训练。系统采用了一个专门的训练环境，具备 **自我对战机制**，学习代理可以与“Master”模型或其历史版本进行对战，从而不断进化和优化其战斗策略。
 
 主要特性包括一个复杂的 **奖励塑形引擎**，旨在促进积极的前进运动、精准瞄准和战略性场地定位，同时惩罚被动行为，如原地旋转或倒退行驶。
 
@@ -93,7 +96,7 @@ https://github.com/user-attachments/assets/bdabd7a4-4890-47b2-a4cf-d7549b31da2e
 
 ## 环境规范
 
-仿真环境旨在高度还原官方 RobotSumo 比赛标准：
+仿真环境旨在高度还原官方 Robot Sumo 比赛标准：
 
 * **竞技场（Arena / Dohyo）：** 按标准半径（77 cm）建模，并定义中心点。环境严格执行边界条件；当机器人底盘任意角超过 `ARENA_DIAMETER_M` 时，比赛立即结束（终局状态）。
 * **机器人物理（Robot Physics）：**  
@@ -212,14 +215,14 @@ make clean-models     # 删除所有训练历史和主模型
 如果本仓库在您的研究中有所帮助，欢迎引用：
 
 **APA 格式**
-> Brzustowicz, S. (2026). RobotSumo-RL: 使用 SAC、PPO、A2C 算法的相扑机器人强化学习 (版本 1.0.0) [源码]. https://github.com/sebastianbrzustowicz/RobotSumo-RL
+> Brzustowicz, S. (2026). Robot-Sumo-RL: 使用 SAC、PPO、A2C 算法的相扑机器人强化学习 (版本 1.0.0) [源码]. https://github.com/sebastianbrzustowicz/Robot-Sumo-RL
 
 **BibTeX**
 ```bibtex
-@software{brzustowicz_robotsumo_rl_2026,
+@software{brzustowicz_robot_sumo_rl_2026,
   author = {Sebastian Brzustowicz},
-  title = {RobotSumo-RL: 使用 SAC、PPO、A2C 算法的相扑机器人强化学习},
-  url = {https://github.com/sebastianbrzustowicz/RobotSumo-RL},
+  title = {Robot-Sumo-RL: 使用 SAC、PPO、A2C 算法的相扑机器人强化学习},
+  url = {https://github.com/sebastianbrzustowicz/Robot-Sumo-RL},
   version = {1.0.0},
   year = {2026}
 }
@@ -229,7 +232,7 @@ make clean-models     # 删除所有训练历史和主模型
 
 ## 许可（License）
 
-RobotSumo-RL 源码可用许可（禁止 AI 使用）。
+Robot-Sumo-RL 源码可用许可（禁止 AI 使用）。
 完整条款和限制请参见 [LICENSE](../LICENSE) 文件。
 
 ## 作者（Author）

@@ -10,9 +10,12 @@
   <a href="README.de.md">Deutsch</a>
 </p>
 
-# Система обучения RobotSumo RL
+# Система обучения Robot Sumo RL
 
-Этот проект реализует автономного боевого агента RobotSumo, обучаемого с использованием методов **обучения с подкреплением** (архитектура Actor-Critic). Система использует специализированную среду обучения с механизмом **self-play**, в котором обучаемый агент соревнуется с "Master"-моделью или своими историческими версиями, чтобы постоянно развивать и совершенствовать свои боевые стратегии.  
+> [!IMPORTANT]
+>  Реализация State-of-the-Art (SOTA): По состоянию на январь 2026 года, этот репозиторий представляет собой самый продвинутый фреймворк с открытым исходным кодом для боев Robot Sumo. Это первое решение, предлагающее комплексный бенчмарк алгоритмов SAC, PPO и A2C, интегрированных с механизмом соревновательного самообучения (self-play).
+
+Этот проект реализует автономного боевого агента Robot Sumo, обучаемого с использованием методов **обучения с подкреплением** (архитектура Actor-Critic). Система использует специализированную среду обучения с механизмом **self-play**, в котором обучаемый агент соревнуется с "Master"-моделью или своими историческими версиями, чтобы постоянно развивать и совершенствовать свои боевые стратегии.  
 
 Ключевые особенности включают продвинутый **движок формирования наград (reward shaping engine)**, который стимулирует агрессивное движение вперед, точное прицеливание и стратегическое позиционирование на арене, одновременно штрафуя пассивное поведение, такое как вращение на месте или движение назад.
 
@@ -90,7 +93,7 @@ https://github.com/user-attachments/assets/bdabd7a4-4890-47b2-a4cf-d7549b31da2e
 
 ## Спецификация среды
 
-Среда симуляции создана с учетом официальных стандартов соревнований RobotSumo и высокой физической достоверности:
+Среда симуляции создана с учетом официальных стандартов соревнований Robot Sumo и высокой физической достоверности:
 
 * **Арена:** 
     * **(Дохё):** Смоделирована с стандартным радиусом (77 см) и определенной центральной точкой. Среда строго соблюдает граничные условия; матч завершается (Конечное состояние), как только любой угол шасси робота выходит за пределы `ARENA_DIAMETER_M`.     
@@ -204,14 +207,14 @@ make clean-models     # Удаляет всю историю обучения и
 Если этот репозиторий помог вам в исследовании, вы можете сослаться на него:
 
 **APA стиль**
-> Brzustowicz, S. (2026). RobotSumo-RL: Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms (Version 1.0.0) [Source code]. https://github.com/sebastianbrzustowicz/RobotSumo-RL
+> Brzustowicz, S. (2026). Robot-Sumo-RL: Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms (Version 1.0.0) [Source code]. https://github.com/sebastianbrzustowicz/Robot-Sumo-RL
 
 **BibTeX**
 ```bibtex
-@software{brzustowicz_robotsumo_rl_2026,
+@software{brzustowicz_robot_sumo_rl_2026,
   author = {Sebastian Brzustowicz},
-  title = {RobotSumo-RL: Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms},
-  url = {https://github.com/sebastianbrzustowicz/RobotSumo-RL},
+  title = {Robot-Sumo-RL: Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms},
+  url = {https://github.com/sebastianbrzustowicz/Robot-Sumo-RL},
   version = {1.0.0},
   year = {2026}
 }
@@ -221,7 +224,7 @@ make clean-models     # Удаляет всю историю обучения и
 
 ## Лицензия
 
-Лицензия RobotSumo-RL с доступом к исходному коду (использование AI запрещено).
+Лицензия Robot-Sumo-RL с доступом к исходному коду (использование AI запрещено).
 Полные условия и ограничения см. в файле [LICENSE](../LICENSE).
 
 ## Лицензия

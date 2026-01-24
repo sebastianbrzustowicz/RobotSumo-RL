@@ -10,9 +10,12 @@
   <strong>Deutsch</strong>
 </p>
 
-# RobotSumo RL Trainingssystem
+# Robot Sumo RL Trainingssystem
 
-Dieses Projekt implementiert einen autonomen RobotSumo-Kampfagenten, der mithilfe von **Reinforcement Learning (Actor-Critic-Architektur)** trainiert wird. Das System verwendet eine spezialisierte Trainingsumgebung mit einem **Self-Play-Mechanismus**, bei dem der lernende Agent gegen ein "Master"-Modell oder seine eigenen historischen Versionen antritt, um kontinuierlich seine Kampftaktiken zu entwickeln und zu verfeinern.  
+> [!IMPORTANT]
+>  State-of-the-Art (SOTA) Implementierung: Stand Januar 2026 stellt dieses Repository das fortschrittlichste Open-Source-Framework für Robot-Sumo-Kämpfe dar. Es ist die erste Lösung, die einen umfassenden Benchmark der Algorithmen SAC, PPO und A2C bietet, integriert in einen kompetitiven Self-Play-Mechanismus.
+
+Dieses Projekt implementiert einen autonomen Robot-Sumo-Kampfagenten, der mithilfe von **Reinforcement Learning (Actor-Critic-Architektur)** trainiert wird. Das System verwendet eine spezialisierte Trainingsumgebung mit einem **Self-Play-Mechanismus**, bei dem der lernende Agent gegen ein "Master"-Modell oder seine eigenen historischen Versionen antritt, um kontinuierlich seine Kampftaktiken zu entwickeln und zu verfeinern.  
 
 Wesentliche Merkmale umfassen eine ausgeklügelte **Reward-Shaping-Engine**, die aggressives Vorwärtsbewegen, präzises Zielen und strategisches Positionieren im Ring fördert, während passive Verhaltensweisen wie Drehen auf der Stelle oder Rückwärtsfahren bestraft werden.
 
@@ -90,7 +93,7 @@ Das Belohnungssystem ist darauf ausgelegt, aggressives Kämpfen und strategische
 * **Effizienz:** Eine konstante Zeitstrafe pro Schritt, um den schnellstmöglichen Sieg zu fördern.
 
 ## Umgebungs-Spezifikation
-Die Simulationsumgebung wurde entwickelt, um den offiziellen RobotSumo-Wettkampfstandards mit hoher physikalischer Genauigkeit zu entsprechen:
+Die Simulationsumgebung wurde entwickelt, um den offiziellen Robot-Sumo-Wettkampfstandards mit hoher physikalischer Genauigkeit zu entsprechen:
 
 * **Arena:** 
     * **(Dohyo):** Modelliert mit einem Standardradius von 77 cm und einem definierten Mittelpunkt. Die Umgebung erzwingt strikt die Randbedingungen; ein Match endet (Terminalzustand), sobald eine Ecke des Roboterchassis den `ARENA_DIAMETER_M` überschreitet.     
@@ -205,14 +208,14 @@ make clean-models     # Löscht die gesamte Trainingshistorie und Master-Modelle
 Wenn dieses Repository Ihre Forschung unterstützt hat, können Sie es wie folgt zitieren:
 
 **APA-Stil**
-> Brzustowicz, S. (2026). RobotSumo-RL: Reinforcement Learning für Sumo-Roboter unter Verwendung der SAC-, PPO- und A2C-Algorithmen (Version 1.0.0) [Quellcode]. https://github.com/sebastianbrzustowicz/RobotSumo-RL
+> Brzustowicz, S. (2026). Robot-Sumo-RL: Reinforcement Learning für Sumo-Roboter unter Verwendung der SAC-, PPO- und A2C-Algorithmen (Version 1.0.0) [Quellcode]. https://github.com/sebastianbrzustowicz/Robot-Sumo-RL
 
 **BibTeX**
 ```bibtex
-@software{brzustowicz_robotsumo_rl_2026,
+@software{brzustowicz_robot_sumo_rl_2026,
   author = {Sebastian Brzustowicz},
-  title = {RobotSumo-RL: Reinforcement Learning für Sumo-Roboter unter Verwendung der SAC-, PPO- und A2C-Algorithmen},
-  url = {https://github.com/sebastianbrzustowicz/RobotSumo-RL},
+  title = {Robot-Sumo-RL: Reinforcement Learning für Sumo-Roboter unter Verwendung der SAC-, PPO- und A2C-Algorithmen},
+  url = {https://github.com/sebastianbrzustowicz/Robot-Sumo-RL},
   version = {1.0.0},
   year = {2026}
 }
@@ -222,7 +225,7 @@ Wenn dieses Repository Ihre Forschung unterstützt hat, können Sie es wie folgt
 
 ## Lizenz
 
-RobotSumo-RL Source-Available License (Keine KI-Nutzung).
+Robot-Sumo-RL Source-Available License (Keine KI-Nutzung).
 Siehe die [LICENSE](../LICENSE) für vollständige Bedingungen und Einschränkungen.
 
 ## Autor

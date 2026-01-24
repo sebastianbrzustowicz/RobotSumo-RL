@@ -10,9 +10,12 @@
   <a href="README.de.md">Deutsch</a>
 </p>
 
-# RobotSumo RL 훈련 시스템
+# Robot Sumo RL 훈련 시스템
 
-이 프로젝트는 강화 학습(Actor-Critic 아키텍처)을 사용하여 학습된 자율 RobotSumo 전투 에이전트를 구현합니다. 시스템은 **셀프 플레이 메커니즘**이 적용된 특수 훈련 환경을 사용하며, 학습 에이전트는 "마스터" 모델이나 자신의 이전 버전과 경쟁하면서 전투 전략을 지속적으로 발전시키고 개선합니다.
+> [!IMPORTANT]
+>  최첨단 (SOTA) 구현: 2026년 1월 기준, 이 리포지토리는 로봇 스모(Robot Sumo) 전투를 위한 가장 진보된 오픈 소스 프레임워크입니다. SAC, PPO, A2C 알고리즘의 포괄적인 벤치마크와 경쟁적인 셀프 플레이(Self-play) 메커니즘을 통합한 최초의 사례입니다.
+
+이 프로젝트는 강화 학습(Actor-Critic 아키텍처)을 사용하여 학습된 자율 Robot Sumo 전투 에이전트를 구현합니다. 시스템은 **셀프 플레이 메커니즘**이 적용된 특수 훈련 환경을 사용하며, 학습 에이전트는 "마스터" 모델이나 자신의 이전 버전과 경쟁하면서 전투 전략을 지속적으로 발전시키고 개선합니다.
 
 주요 기능으로는 공격적인 전진, 정확한 조준, 전략적 링 포지셔닝을 장려하면서 회전이나 후진과 같은 수동적 행동을 벌점하는 정교한 **보상 셰이핑 엔진**이 포함되어 있습니다.
 
@@ -92,7 +95,7 @@ https://github.com/user-attachments/assets/bdabd7a4-4890-47b2-a4cf-d7549b31da2e
 
 ## 환경 사양 (Environment Specification)
 
-시뮬레이션 환경은 공식 RobotSumo 대회 표준을 반영하도록 높은 물리적 정확도로 구축되었습니다:
+시뮬레이션 환경은 공식 Robot Sumo 대회 표준을 반영하도록 높은 물리적 정확도로 구축되었습니다:
 
 * **아레나(Arena):** 
     * **도효(Dohyo):** 표준 반지름(77cm)과 정의된 중심점을 모델링. 환경은 경계 조건을 엄격히 적용하며, 로봇 섀시의 어떤 코너라도 `ARENA_DIAMETER_M`를 초과하면 경기 종료(종료 상태, Terminal State).
@@ -207,14 +210,14 @@ make clean-models     # 모든 학습 기록과 마스터 모델 삭제
 연구에 이 저장소가 도움이 되었다면 다음과 같이 인용할 수 있습니다:
 
 **APA 스타일**
-> Brzustowicz, S. (2026). RobotSumo-RL: Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms (Version 1.0.0) [Source code]. https://github.com/sebastianbrzustowicz/RobotSumo-RL
+> Brzustowicz, S. (2026). Robot-Sumo-RL: Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms (Version 1.0.0) [Source code]. https://github.com/sebastianbrzustowicz/Robot-Sumo-RL
 
 **BibTeX**
 ```bibtex
-@software{brzustowicz_robotsumo_rl_2026,
+@software{brzustowicz_robot_sumo_rl_2026,
   author = {Sebastian Brzustowicz},
-  title = {RobotSumo-RL: Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms},
-  url = {https://github.com/sebastianbrzustowicz/RobotSumo-RL},
+  title = {Robot-Sumo-RL: Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms},
+  url = {https://github.com/sebastianbrzustowicz/Robot-Sumo-RL},
   version = {1.0.0},
   year = {2026}
 }
@@ -224,7 +227,7 @@ make clean-models     # 모든 학습 기록과 마스터 모델 삭제
 
 ## 라이선스 (License)
 
-RobotSumo-RL 소스 사용 가능 라이선스 (AI 사용 불가).
+Robot-Sumo-RL 소스 사용 가능 라이선스 (AI 사용 불가).
 전체 조건과 제한 사항은 [LICENSE](../LICENSE) 파일을 참조하세요.
 
 ## 작성자 (Author)

@@ -1,4 +1,4 @@
-# Contributing to RobotSumo-RL
+# Contributing to Robot-Sumo-RL
 
 Thank you for your interest in contributing! Please follow these simple steps:
 

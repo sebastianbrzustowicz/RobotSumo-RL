@@ -16,7 +16,7 @@ class SumoEnv:
         self.render_vectors = render_vectors
         self.ARENA_RADIUS = ARENA_RADIUS
         self.center_x, self.center_y = WIDTH // 2, HEIGHT // 2
-        pygame.display.set_caption("RobotSumo-RL: Cross Play")
+        pygame.display.set_caption("Robot-Sumo-RL: Cross Play")
 
         self.screen = None
         self.renderer = None

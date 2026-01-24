@@ -4,11 +4,11 @@ authors:
 - family-names: "Brzustowicz"
   given-names: "Sebastian"
   email: "Se.Brzustowicz@gmail.com"
-title: "RobotSumo-RL: Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms"
+title: "Robot-Sumo-RL: Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms"
 version: 1.0.0
 date-released: 2026-01-11
-url: "https://github.com/sebastianbrzustowicz/RobotSumo-RL"
-repository-code: "https://github.com/sebastianbrzustowicz/RobotSumo-RL"
+url: "https://github.com/sebastianbrzustowicz/Robot-Sumo-RL"
+repository-code: "https://github.com/sebastianbrzustowicz/Robot-Sumo-RL"
 keywords:
   - machine-learning
   - reinforcement-learning

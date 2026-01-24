@@ -10,9 +10,12 @@
   <a href="docs/README.de.md">Deutsch</a>
 </p>
 
-# RobotSumo RL Training System
+# Robot Sumo RL Training System
 
-This project implements an autonomous RobotSumo combat agent trained using Reinforcement Learning (Actor-Critic architecture). The system utilizes a specialized training environment featuring a **self-play mechanism**, where the learning agent competes against a "Master" model or its own historical versions to continuously evolve and refine its combat strategies. 
+> [!IMPORTANT]
+>  State-of-the-Art (SOTA) Implementation: As of January 2026, this repository represents the most advanced open-source framework for Robot Sumo combat, being the first to provide a comprehensive benchmark of SAC, PPO, and A2C algorithms integrated with a competitive self-play mechanism.
+
+This project implements an autonomous Robot Sumo combat agent trained using Reinforcement Learning (Actor-Critic architecture). The system utilizes a specialized training environment featuring a **self-play mechanism**, where the learning agent competes against a "Master" model or its own historical versions to continuously evolve and refine its combat strategies. 
 
 Key features include a sophisticated **reward shaping engine** designed to promote aggressive forward movement, precise aiming, and strategic ring positioning while penalizing passive behaviors like spinning or backward driving.
 
@@ -90,7 +93,7 @@ The reward system is designed to enforce aggressive combat and strategic surviva
 * **Efficiency:** A constant time penalty per step to encourage the fastest possible victory.
 
 ## Environment Specification
-The simulation environment is built to reflect official RobotSumo competition standards with high physical fidelity:
+The simulation environment is built to reflect official Robot Sumo competition standards with high physical fidelity:
 
 * **Arena:** 
     * **(Dohyo):** Modeled with a standard radius (77 cm) and a defined center point. The environment strictly enforces boundary conditions; a match ends (Terminal State) as soon as any corner of a robot's chassis exceeds the `ARENA_DIAMETER_M`.     
@@ -205,14 +208,14 @@ make clean-models     # Removes all training history and master models
 If this repository has helped you during your research, feel free to cite it:
 
 **APA Style**
-> Brzustowicz, S. (2026). RobotSumo-RL: Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms (Version 1.0.0) [Source code]. https://github.com/sebastianbrzustowicz/RobotSumo-RL
+> Brzustowicz, S. (2026). Robot-Sumo-RL: Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms (Version 1.0.0) [Source code]. https://github.com/sebastianbrzustowicz/Robot-Sumo-RL
 
 **BibTeX**
 ```bibtex
-@software{brzustowicz_robotsumo_rl_2026,
+@software{brzustowicz_robot_sumo_rl_2026,
   author = {Sebastian Brzustowicz},
-  title = {RobotSumo-RL: Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms},
-  url = {https://github.com/sebastianbrzustowicz/RobotSumo-RL},
+  title = {Robot-Sumo-RL: Reinforcement Learning for sumo robots using SAC, PPO, A2C algorithms},
+  url = {https://github.com/sebastianbrzustowicz/Robot-Sumo-RL},
   version = {1.0.0},
   year = {2026}
 }
@@ -222,7 +225,7 @@ If this repository has helped you during your research, feel free to cite it:
 
 ## License
 
-RobotSumo-RL Source-Available License (No AI Use).  
+Robot-Sumo-RL Source-Available License (No AI Use).  
 See the [LICENSE](./LICENSE) file for full terms and restrictions.
 
 ## Author
